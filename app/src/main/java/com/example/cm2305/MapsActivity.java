@@ -2,7 +2,12 @@ package com.example.cm2305;
 
 import androidx.fragment.app.FragmentActivity;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -11,6 +16,14 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.example.cm2305.databinding.ActivityMapsBinding;
+import com.what3words.androidwrapper.What3WordsV3;
+import com.what3words.javawrapper.request.Coordinates;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.Nullable;
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
+import io.reactivex.rxjava3.core.Observable;
+import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -47,5 +60,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         LatLng sydney = new LatLng(-34, 151);
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+    }
+}
+
+class What3Words extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_maps);
+
+        What3WordsV3 wrapper = new What3WordsV3("ZQ0XPH3L", this);
+        Observable.fromCallable(() -> wrapper.convertTo3wa(new Coordinates(51.2423, -0.12423)).execute())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(result -> {
+                    if (result.isSuccessful()) {
+                        Log.i("MainActivity", String.format("3 word address: %s", result.getWords()));
+                    } else {
+                        Log.e("MainActivity", result.getError().getMessage());
+                    }
+                });
     }
 }
