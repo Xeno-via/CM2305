@@ -2,12 +2,8 @@ package com.example.cm2305;
 
 import androidx.fragment.app.FragmentActivity;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
-import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -18,9 +14,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.example.cm2305.databinding.ActivityMapsBinding;
 import com.what3words.androidwrapper.What3WordsV3;
 import com.what3words.javawrapper.request.Coordinates;
+import com.what3words.javawrapper.response.ConvertTo3WA;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.annotation.Nullable;
+import java.util.concurrent.atomic.AtomicReference;
+
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
@@ -41,6 +38,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        What3Words(51.2423, -0.12423);
     }
 
     /**
@@ -61,25 +59,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
-}
 
-class What3Words extends AppCompatActivity {
 
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
-
+    public void What3Words(Double Lat,Double Long){
         What3WordsV3 wrapper = new What3WordsV3("ZQ0XPH3L", this);
-        Observable.fromCallable(() -> wrapper.convertTo3wa(new Coordinates(51.2423, -0.12423)).execute())
+        Observable.fromCallable(() -> wrapper.convertTo3wa(new Coordinates(Lat, Long)).execute())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(result -> {
                     if (result.isSuccessful()) {
                         Log.i("MainActivity", String.format("3 word address: %s", result.getWords()));
+
                     } else {
-                        Log.e("MainActivity", result.getError().getMessage());
+                        Log.i("MainActivity", result.getError().getMessage());
                     }
                 });
+
+
+
     }
 }
+

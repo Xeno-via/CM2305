@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Uni Stuff/CsYear2/Group Project/CM2305/app/src/main/res/layout/activity_maps.xml" value="0.2689969604863222" />
+        <entry key="..\:/Uni Stuff/CsYear2/Group Project/CM2305/app/src/main/res/layout/content_maps.xml" value="0.2689969604863222" />
+      </map>
+    </option>
+  </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK" />
 </project>
