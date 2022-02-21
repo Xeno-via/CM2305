@@ -52,14 +52,18 @@
         android:layout_centerHorizontal="true"
         android:layout_margin="8dp"
         android:ems="10"/>
+
     <Button
         android:id="@+id/add_contact_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Add Account"
         android:layout_below="@id/contact_method_group"
         android:layout_centerHorizontal="true"
-        android:layout_margin="8dp"/>
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="Add Contact" />
     <TextView
         android:id="@+id/add_contact_output_text"
         android:layout_width="wrap_content"

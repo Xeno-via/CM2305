@@ -56,7 +56,7 @@
         android:id="@+id/view_contact_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="View Account"
+        android:text="View Contact"
         android:layout_below="@id/view_contact_phone_field"
         android:layout_centerHorizontal="true"
         android:layout_margin="8dp"/>

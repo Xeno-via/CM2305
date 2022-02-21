@@ -41,9 +41,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
         What3Words(51.2423, -0.12423);
 
-        // TEMPORARILY ADDED TO START AT DATABASE PAGE
+        // REMOVE BELOW WHEN MERGING //
         Intent intent = new Intent(this, DatabaseActivity.class);
         startActivity(intent);
+        // REMOVE ABOVE WHEN MERGING //
     }
 
     /**

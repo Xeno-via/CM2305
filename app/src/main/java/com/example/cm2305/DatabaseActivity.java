@@ -21,11 +21,11 @@ public class DatabaseActivity extends AppCompatActivity {
         setContentView(R.layout.activity_database);
 
         // Get view buttons
-        accountFragmentBtn = (Button)findViewById(R.id.account_fragment_btn);
-        contactFragmentBtn = (Button)findViewById(R.id.contact_fragment_btn);
-        locationFragmentBtn = (Button)findViewById(R.id.location_fragment_btn);
-        addFragmentRadio = (RadioButton)findViewById(R.id.add_fragment_radio);
-        viewFragmentRadio = (RadioButton)findViewById(R.id.view_fragment_radio);
+        accountFragmentBtn = findViewById(R.id.account_fragment_btn);
+        contactFragmentBtn = findViewById(R.id.contact_fragment_btn);
+        locationFragmentBtn = findViewById(R.id.location_fragment_btn);
+        addFragmentRadio = findViewById(R.id.add_fragment_radio);
+        viewFragmentRadio = findViewById(R.id.view_fragment_radio);
 
         // Pressing the Account Button
         accountFragmentBtn.setOnClickListener(new View.OnClickListener() {
