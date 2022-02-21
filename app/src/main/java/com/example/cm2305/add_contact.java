@@ -80,12 +80,12 @@ public class add_contact extends Fragment {
         return editText.getText().toString().trim();
     }
 
-    private String methodOfChoice(){
-        if (textRadio.isChecked()){
+    private String methodOfChoice() {
+        if (textRadio.isChecked()) {
             return "text";
         } else if (callRadio.isChecked()) {
             return "call";
-        } else if (videoRadio.isChecked()){
+        } else if (videoRadio.isChecked()) {
             return "video";
         }
         return null;
