@@ -1,5 +1,64 @@
 package com.example.cm2305;
 
-public class DatabaseActivity {
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.RadioButton;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
+public class DatabaseActivity extends AppCompatActivity {
+
+    Button accountFragmentBtn, contactFragmentBtn, locationFragmentBtn;
+    RadioButton addFragmentRadio, viewFragmentRadio;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_database);
+
+        // Get view buttons
+        accountFragmentBtn = (Button)findViewById(R.id.account_fragment_btn);
+        contactFragmentBtn = (Button)findViewById(R.id.contact_fragment_btn);
+        locationFragmentBtn = (Button)findViewById(R.id.location_fragment_btn);
+        addFragmentRadio = (RadioButton)findViewById(R.id.add_fragment_radio);
+        viewFragmentRadio = (RadioButton)findViewById(R.id.view_fragment_radio);
+
+        // Pressing the Account Button
+        accountFragmentBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        // Pressing the Contact Button
+        contactFragmentBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        // Pressing the Location Button
+        locationFragmentBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+    }
+
+    // Replace fragment when one of the buttons is pressed.
+    private void replaceFragment(Fragment fragment){
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.frameLayout, fragment);
+        fragmentTransaction.commit();
+    }
 
 }
