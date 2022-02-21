@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#EF7A7A"
+    tools:context=".view_account">
+
+    <TextView
+        android:id="@+id/view_account_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="View Account"
+        android:textAlignment="center"
+        android:textSize="34sp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/view_account_first_name_field"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="First Name"
+        android:inputType="textPersonName"
+        android:layout_below="@id/view_account_title"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="16dp"
+        android:ems="10"/>
+    <EditText
+        android:id="@+id/view_account_last_name_field"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Last Name"
+        android:inputType="textPersonName"
+        android:layout_below="@id/view_account_first_name_field"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="8dp"
+        android:ems="10"/>
+    <Button
+        android:id="@+id/view_account_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="View Account"
+        android:layout_below="@id/view_account_last_name_field"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="8dp"/>
+    <TextView
+        android:id="@+id/view_account_output_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:layout_below="@id/view_account_btn"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="8dp"/>
+
+
+
+</RelativeLayout>
