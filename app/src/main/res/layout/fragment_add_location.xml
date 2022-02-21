@@ -1,14 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#6CBBEF"
     tools:context=".add_location">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:id="@+id/add_location_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="Add Location"
+        android:textAlignment="center"
+        android:textSize="34sp"
+        android:textStyle="bold" />
 
-</FrameLayout>
+    <EditText
+        android:id="@+id/add_location_address_field"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Address"
+        android:inputType="textMultiLine"
+        android:layout_below="@id/add_location_title"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="16dp"
+        android:ems="10"/>
+
+    <EditText
+        android:id="@+id/add_location_country_field"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Country"
+        android:inputType="text"
+        android:layout_below="@id/add_location_address_field"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="8dp"
+        android:ems="10"/>
+    <Button
+        android:id="@+id/add_location_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Location"
+        android:layout_below="@id/add_location_country_field"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="8dp"/>
+    <TextView
+        android:id="@+id/add_location_output_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:layout_below="@id/add_location_btn"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="8dp"/>
+
+
+
+</RelativeLayout>

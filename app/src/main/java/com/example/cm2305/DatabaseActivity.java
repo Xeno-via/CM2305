@@ -31,7 +31,9 @@ public class DatabaseActivity extends AppCompatActivity {
         accountFragmentBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                if (addFragmentRadio.isChecked()) {
+                    replaceFragment(new add_account());
+                } else {replaceFragment(new view_account());}
             }
         });
 
@@ -39,7 +41,9 @@ public class DatabaseActivity extends AppCompatActivity {
         contactFragmentBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                if (addFragmentRadio.isChecked()) {
+                    replaceFragment(new add_contact());
+                } else {replaceFragment(new view_contact());}
             }
         });
 
@@ -47,7 +51,9 @@ public class DatabaseActivity extends AppCompatActivity {
         locationFragmentBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                if (addFragmentRadio.isChecked()) {
+                    replaceFragment(new add_location());
+                } else {replaceFragment(new view_location());}
             }
         });
 

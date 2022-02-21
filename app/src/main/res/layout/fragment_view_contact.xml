@@ -1,14 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#A0F196"
     tools:context=".view_contact">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:id="@+id/view_contact_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="View Contact"
+        android:textAlignment="center"
+        android:textSize="34sp"
+        android:textStyle="bold" />
 
-</FrameLayout>
+    <EditText
+        android:id="@+id/view_contact_first_name_field"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="First Name"
+        android:inputType="textPersonName"
+        android:layout_below="@id/view_contact_title"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="16dp"
+        android:ems="10"/>
+    <EditText
+        android:id="@+id/view_contact_last_name_field"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Last Name"
+        android:inputType="textPersonName"
+        android:layout_below="@id/view_contact_first_name_field"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="8dp"
+        android:ems="10"/>
+
+    <EditText
+        android:id="@+id/view_contact_phone_field"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Phone Number"
+        android:inputType="phone"
+        android:layout_below="@id/view_contact_last_name_field"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="8dp"
+        android:ems="10"/>
+    <Button
+        android:id="@+id/view_contact_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="View Account"
+        android:layout_below="@id/view_contact_phone_field"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="8dp"/>
+    <TextView
+        android:id="@+id/view_contact_output_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:layout_below="@id/view_contact_btn"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="8dp"/>
+
+
+</RelativeLayout>
