@@ -5,6 +5,7 @@ import android.app.Activity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -22,6 +23,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.cm2305.MapsActivity;
 import com.example.cm2305.R;
 import com.example.cm2305.ui.login.LoginViewModel;
 import com.example.cm2305.ui.login.LoginViewModelFactory;
@@ -79,7 +81,11 @@ public class LoginActivity extends AppCompatActivity {
                 setResult(Activity.RESULT_OK);
 
                 //Complete and destroy login activity once successful
-                finish();
+                Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
+                startActivity(intent); //change activity
+
+
+                //finish();
             }
         });
 
