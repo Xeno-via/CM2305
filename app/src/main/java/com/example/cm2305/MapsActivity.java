@@ -9,6 +9,7 @@ import android.util.Log;
 import android.os.Looper;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 import android.Manifest;
 import org.json.JSONObject;
@@ -16,6 +17,8 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.widget.TextView;
 import org.json.*;
+
+import java.util.Arrays;
 import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -35,8 +38,12 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -71,7 +78,11 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
     private static final int PERMISSIONS_FINE_LOCATION = 99;
     private TextView mTextViewResult;
     private RequestQueue mQueue;
-
+    private Circle mCircle;
+    public Marker destM;
+    public static Polyline polyline;
+    public static Marker currentlocMark;
+    public static LatLng destCords;
     LocationRequest locationRequest = LocationRequest.create();
     FusedLocationProviderClient fusedLocationProviderClient;
     LocationCallback locationCallBack;
@@ -94,7 +105,7 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
         mapFragment.getMapAsync(this);
         What3Words(51.2423, -0.12423);
 
-        locationRequest.setInterval(10000);
+        locationRequest.setInterval(5000);
         locationRequest.setFastestInterval(5000);
         locationRequest.setPriority(locationRequest.PRIORITY_HIGH_ACCURACY);
         updateGPS();
@@ -150,6 +161,8 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
 
 
 
+
+
                 }
             });
         }
@@ -164,19 +177,67 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
     private void updateVals (Location location) {
         double latitude = location.getLatitude();
         double longitude = location.getLongitude();
+
         LatLng coords = new LatLng(latitude, longitude);
+
+        EditText simpleEditText = (EditText) findViewById(R.id.simpleEditText);
+
+        Log.d("ADebugTag", "Value: " + '1');
+        simpleEditText.setText(latitude+""+","+longitude+"",TextView.BufferType.EDITABLE);
+        simpleEditText.setEnabled(false);
         TextView textView = (TextView) findViewById(R.id.textView);
+
+        if (currentlocMark != null)
+        {
+            currentlocMark.setPosition(new LatLng(latitude,longitude));
+        }
+        else
+        {
+            currentlocMark = mMap.addMarker(new MarkerOptions().position(coords).title("Current Location").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA)));
+        }
+
+
+        Button stopButton = (Button) findViewById(R.id.button2);
+        Button button = (Button) findViewById(R.id.button_send);
+
+
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coords, 18));
         if (MapsActivity.decodedPath == null) {
             textView.setText("On Path: " + coords);
 
         } else {
             boolean hasDeviated = isPointOnPolyline(coords, new PolylineOptions().addAll(decodedPath), 20);
             textView.setText("On Path: " + hasDeviated + " " + coords);
+            float[] results = new float[2];
+            Location.distanceBetween( location.getLatitude(), location.getLongitude(),
+                    mCircle.getCenter().latitude, mCircle.getCenter().longitude, results);
+
+            if( results[0] > mCircle.getRadius()  ){
+                Toast.makeText(getBaseContext(), "Outside, distance from center: " + results[0] + " radius: " + mCircle.getRadius(), Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(getBaseContext(), "Inside, distance from center: " + results[0] + " radius: " + mCircle.getRadius() , Toast.LENGTH_LONG).show();
+                StopLocationUpdates();
+                stopButton.setVisibility(View.INVISIBLE);
+                button.setVisibility(View.VISIBLE);
+                polyline.remove();
+                mCircle.remove();
+                destM.remove();
+
+            }
 
         }
     }
 
+    private void drawMarkerWithCircle(LatLng position){
+        double radiusInMeters = 20.0;
+        int strokeColor = 0xffff0000; //red outline
+        int shadeColor = 0x44ff0000; //opaque red fill
 
+        CircleOptions circleOptions = new CircleOptions().center(position).radius(radiusInMeters).fillColor(shadeColor).strokeColor(strokeColor).strokeWidth(8);
+        mCircle = mMap.addCircle(circleOptions);
+
+
+    }
 
 
     /**
@@ -191,83 +252,123 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        updateGPS();
 
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        //Log.d("ADebugTag", "Value: " + editTextValue);
+        //String[] arr = editTextValue.split(",");
+        Log.d("ADebugTag", "Value: " + '2');
+
+        //LatLng currentLoc = new LatLng(, Double.parseDouble(arr[1]));
+        //mMap.addMarker(new MarkerOptions().position(currentLoc).title("Current Location"));
+        //mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLoc));
 
 
 
-
-        CameraPosition PACIFIC_CAMERA = new CameraPosition.Builder()
-                .target(new LatLng(34.1358593, -117.922066)).zoom(10.0f).bearing(0).tilt(0).build();
-
-        String str_origin = "origin="+"34.1358593,-117.922066";
-
-        // Destination of route
-        String str_dest = "destination="+"+34.1358593,-118.3511633";
-
-        String travel_Mode = "mode=walking";
-
-        // Key
-        String key = "key=" + "AIzaSyD3BajDg2sSEYyflYBzFRHwmJjNM-xfM7A";
-
-        // Building the parameters to the web service
-        String parameters = str_origin+"&amp;"+str_dest+"&amp;"+travel_Mode+"&amp;"+key;
-
-        // Output format
-        String output = "json";
-
-        // Building the url to the web service
-        String url = "https://maps.googleapis.com/maps/api/directions/json?origin=Disneyland&destination=Universal+Studios+Hollywood&key=AIzaSyD3BajDg2sSEYyflYBzFRHwmJjNM-xfM7A";
-
-        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(PACIFIC_CAMERA));
-
+        Button stopButton = (Button) findViewById(R.id.button2);
         Button button = (Button) findViewById(R.id.button_send);
+        stopButton.setVisibility(View.INVISIBLE);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 StartLocationUpdates();
+                button.setVisibility(View.INVISIBLE);
+                stopButton.setVisibility(View.VISIBLE);
+                EditText simpleEditText = (EditText) findViewById(R.id.simpleEditText);
+
+                EditText simpleEditText2 = (EditText) findViewById(R.id.simpleEditText2);
+                String editTextValue = simpleEditText.getText().toString();
+                String editTextValue2 = simpleEditText2.getText().toString();
+                TextView textView = (TextView) findViewById(R.id.textView);
+
+                String str_origin = "origin="+editTextValue;
+
+                // Destination of route
+
+
+                String[] arr = editTextValue2.split(" ");
+
+                String strDestName = String.join("+", arr);
+
+
+                String str_dest = "destination="+strDestName;
+
+
+
+                String travel_Mode = "mode=walking";
+
+                // Key
+                String Api = BuildConfig.MAPS_API_KEY;
+                String key = "key=" + Api;
+
+                // Output format
+                String output = "json?";
+
+                // Building the parameters to the web service
+                String parameters = str_origin+"&"+str_dest+"&"+travel_Mode+"&"+key;
+
+
+
+                // Building the url to the web service
+                String url = "https://maps.googleapis.com/maps/api/directions/json?"+parameters;
+
+
+                Log.d("ADebugTag", "Value: " + url);
+
+
+
+                JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
+                        (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                //textView.setText("Response: " + response.toString());
+
+                                try {
+                                    JSONObject obj = new JSONObject(response.toString());
+                                    //textView.setText("Response: " + response.toString());
+                                    String encoded_Route = obj.getJSONArray("routes").getJSONObject(0).getJSONObject("overview_polyline").getString("points");
+                                    //textView.setText("Response: " + encoded_Route);
+                                    decodedPath = PolyUtil.decode(encoded_Route);
+                                    polyline = mMap.addPolyline(new PolylineOptions().addAll(decodedPath));
+
+                                    String end_lat = obj.getJSONArray("routes").getJSONObject(0).getJSONArray("legs").getJSONObject(0).getJSONObject("end_location").getString("lat");
+                                    String end_long = obj.getJSONArray("routes").getJSONObject(0).getJSONArray("legs").getJSONObject(0).getJSONObject("end_location").getString("lng");
+                                    destCords = new LatLng( Double.parseDouble(end_lat), Double.parseDouble(end_long));
+                                    destM = mMap.addMarker(new MarkerOptions().position(destCords).title("Destination Location"));
+                                    drawMarkerWithCircle(destCords);
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                            }
+                        }, new Response.ErrorListener() {
+
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                error.printStackTrace();
+                            }
+                        });
+
+                mQueue.add(jsonObjectRequest);
             }
         });
 
 
+        stopButton.setOnClickListener(new View.OnClickListener() {public void onClick(View v) {
 
-        TextView textView = (TextView) findViewById(R.id.textView);
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
-                (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+            StopLocationUpdates();
+            stopButton.setVisibility(View.INVISIBLE);
+            button.setVisibility(View.VISIBLE);
+            polyline.remove();
+            mCircle.remove();
+            destM.remove();
 
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        //textView.setText("Response: " + response.toString());
+        }
 
-                        try {
-                            JSONObject obj = new JSONObject(response.toString());
-                            //textView.setText("Response: " + response.toString());
-                            String encoded_Route = obj.getJSONArray("routes").getJSONObject(0).getJSONObject("overview_polyline").getString("points");
-                            //textView.setText("Response: " + encoded_Route);
-                            decodedPath = PolyUtil.decode(encoded_Route);
-                            mMap.addPolyline(new PolylineOptions().addAll(decodedPath));
-                            boolean hasDeviated = isPointOnPolyline(new LatLng(33.821700, -117.922683), new PolylineOptions().addAll(decodedPath), 20);
-                            mMap.addMarker(new MarkerOptions().position(new LatLng(33.821700, -117.922683)).title("Marker"));
-                            //textView.setText("On Path: " + hasDeviated);
 
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+            });
 
-                    }
-                }, new Response.ErrorListener() {
 
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        error.printStackTrace();
-                    }
-                });
-
-        mQueue.add(jsonObjectRequest);
-
-        //StartLocationUpdates();
 
 
 
