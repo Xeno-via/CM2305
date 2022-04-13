@@ -1,13 +1,14 @@
 {
   "project_info": {
     "project_number": "644954159247",
+    "firebase_url": "https://night-time-security-app-default-rtdb.europe-west1.firebasedatabase.app",
     "project_id": "night-time-security-app",
     "storage_bucket": "night-time-security-app.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:644954159247:android:7b5c7cc88daf55f6ca58fa",
+        "mobilesdk_app_id": "1:644954159247:android:88b05f5fea84982dca58fa",
         "android_client_info": {
           "package_name": "com.example.cm2305"
         }

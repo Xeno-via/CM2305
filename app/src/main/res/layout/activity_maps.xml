@@ -45,6 +45,7 @@
         android:insetRight="0dp"
         android:onClick="sendMessage"
         android:text="Start Tracking"
+        android:visibility="invisible"
         android:translationX="250dp" />
 
     <Button
@@ -52,7 +53,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Stop Tracking"
-        android:translationX="165dp"
+        android:translationX="225dp"
+        android:translationY="650dp" />
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Check Users"
+        android:translationX="50dp"
         android:translationY="650dp" />
 
 

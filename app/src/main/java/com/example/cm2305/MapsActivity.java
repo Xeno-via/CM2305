@@ -2,9 +2,12 @@ package com.example.cm2305;
 
 import androidx.fragment.app.FragmentActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.os.Looper;
 import android.view.View;
@@ -19,6 +22,7 @@ import android.widget.TextView;
 import org.json.*;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -55,7 +59,14 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.CancellationTokenSource;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+
+
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 
 import com.example.cm2305.databinding.ActivityMapsBinding;
 import com.google.maps.android.PolyUtil;
@@ -64,6 +75,8 @@ import com.what3words.javawrapper.request.Coordinates;
 import com.what3words.javawrapper.response.ConvertTo3WA;
 
 
+import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicReference;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
@@ -81,6 +94,7 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
     private Circle mCircle;
     public Marker destM;
     public static Polyline polyline;
+    public DatabaseReference tasksRef;
     public static Marker currentlocMark;
     public static LatLng destCords;
     LocationRequest locationRequest = LocationRequest.create();
@@ -88,10 +102,17 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
     LocationCallback locationCallBack;
     private final CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
     public static List<LatLng> decodedPath;
+    public static final String TAG = "Error";
+
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
 
         //binding = ActivityMapsBinding.inflate(getLayoutInflater());
         //setContentView(binding.getRoot());
@@ -108,7 +129,7 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
         locationRequest.setInterval(5000);
         locationRequest.setFastestInterval(5000);
         locationRequest.setPriority(locationRequest.PRIORITY_HIGH_ACCURACY);
-        updateGPS();
+
         locationCallBack = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
@@ -180,6 +201,8 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
 
         LatLng coords = new LatLng(latitude, longitude);
 
+
+
         EditText simpleEditText = (EditText) findViewById(R.id.simpleEditText);
 
         Log.d("ADebugTag", "Value: " + '1');
@@ -187,9 +210,20 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
         simpleEditText.setEnabled(false);
         TextView textView = (TextView) findViewById(R.id.textView);
 
+        if (tasksRef != null)
+        {
+            tasksRef.child("CurrentCords").setValue(String.valueOf(coords));
+
+        }
+        else
+        {
+           int donothing = 1;
+        }
+
         if (currentlocMark != null)
         {
             currentlocMark.setPosition(new LatLng(latitude,longitude));
+
         }
         else
         {
@@ -201,7 +235,7 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
         Button button = (Button) findViewById(R.id.button_send);
 
 
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(coords, 18));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(coords, 18));
         if (MapsActivity.decodedPath == null) {
             textView.setText("On Path: " + coords);
 
@@ -222,10 +256,14 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
                 polyline.remove();
                 mCircle.remove();
                 destM.remove();
+                String journeyStatus = "Finished";
+                tasksRef.child("journeyStatus").setValue(journeyStatus);
 
             }
 
         }
+
+
     }
 
     private void drawMarkerWithCircle(LatLng position){
@@ -262,11 +300,28 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
         //mMap.addMarker(new MarkerOptions().position(currentLoc).title("Current Location"));
         //mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLoc));
 
-
+        FirebaseApp.initializeApp(this);
+        FirebaseDatabase database = FirebaseDatabase.getInstance("https://night-time-security-app-default-rtdb.europe-west1.firebasedatabase.app/");
+        DatabaseReference myRef = database.getReference("Journeys");
 
         Button stopButton = (Button) findViewById(R.id.button2);
         Button button = (Button) findViewById(R.id.button_send);
+        Button button3 = (Button) findViewById(R.id.button3);
         stopButton.setVisibility(View.INVISIBLE);
+        TextView textView = (TextView) findViewById(R.id.textView);
+        EditText simpleEditText2 = (EditText) findViewById(R.id.simpleEditText2);
+
+        simpleEditText2.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void afterTextChanged(Editable s) {}
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                button.setVisibility(s.toString().trim().length() > 0 ? View.VISIBLE : View.INVISIBLE);
+            }});
+
+
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 StartLocationUpdates();
@@ -274,10 +329,14 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
                 stopButton.setVisibility(View.VISIBLE);
                 EditText simpleEditText = (EditText) findViewById(R.id.simpleEditText);
 
-                EditText simpleEditText2 = (EditText) findViewById(R.id.simpleEditText2);
+
+
                 String editTextValue = simpleEditText.getText().toString();
                 String editTextValue2 = simpleEditText2.getText().toString();
                 TextView textView = (TextView) findViewById(R.id.textView);
+
+
+
 
                 String str_origin = "origin="+editTextValue;
 
@@ -311,7 +370,9 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
                 String url = "https://maps.googleapis.com/maps/api/directions/json?"+parameters;
 
 
-                Log.d("ADebugTag", "Value: " + url);
+                //Log.d("ADebugTag", "Value: " + url);
+
+                //myRef.setValue("Hello, World!");
 
 
 
@@ -330,11 +391,23 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
                                     decodedPath = PolyUtil.decode(encoded_Route);
                                     polyline = mMap.addPolyline(new PolylineOptions().addAll(decodedPath));
 
+
+                                    String start_lat = obj.getJSONArray("routes").getJSONObject(0).getJSONArray("legs").getJSONObject(0).getJSONObject("start_location").getString("lat");
+                                    String start_long = obj.getJSONArray("routes").getJSONObject(0).getJSONArray("legs").getJSONObject(0).getJSONObject("start_location").getString("lng");
+                                    LatLng startCords = new LatLng( Double.parseDouble(start_lat), Double.parseDouble(start_long));
+
+
                                     String end_lat = obj.getJSONArray("routes").getJSONObject(0).getJSONArray("legs").getJSONObject(0).getJSONObject("end_location").getString("lat");
                                     String end_long = obj.getJSONArray("routes").getJSONObject(0).getJSONArray("legs").getJSONObject(0).getJSONObject("end_location").getString("lng");
                                     destCords = new LatLng( Double.parseDouble(end_lat), Double.parseDouble(end_long));
                                     destM = mMap.addMarker(new MarkerOptions().position(destCords).title("Destination Location"));
                                     drawMarkerWithCircle(destCords);
+                                    tasksRef = myRef.push();
+                                    Journey journey = new Journey(startCords,destCords,"UserTest","TrustedTest",tasksRef);
+
+                                    journey.add2Fire();
+
+
 
                                 } catch (JSONException e) {
                                     e.printStackTrace();
@@ -350,6 +423,9 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
                         });
 
                 mQueue.add(jsonObjectRequest);
+
+
+
             }
         });
 
@@ -362,15 +438,22 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
             polyline.remove();
             mCircle.remove();
             destM.remove();
+            String journeyStatus = "Finished";
+            tasksRef.child("journeyStatus").setValue(journeyStatus);
 
         }
 
 
+
+
             });
 
+        button3.setOnClickListener(new View.OnClickListener() {public void onClick(View v) {
+            Intent intent = new Intent(getApplicationContext(), CheckTrusted.class);
+            startActivity(intent); //change activity
 
-
-
+        }
+        });
 
 
 
@@ -399,7 +482,53 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
         return PolyUtil.isLocationOnPath(point, polyline.getPoints(), false, tolerance);
     }
 
+    public class Journey {
+        public LatLng startCords;
+        public LatLng currCords;
+        public LatLng destCords;
+        public String userName;
+        public String trustedUserName;
+        public String dangerLevel;
+        public String journeyStatus;
+        public String ETA;
+        public DatabaseReference tasksRef;
+        public int journeyID;
 
+
+        public Journey(LatLng start, LatLng dest, String user, String trusted, DatabaseReference ref){
+            startCords = start;
+            currCords = start;
+            destCords = dest;
+            userName = user;
+            trustedUserName = trusted;
+            journeyStatus = "In Progress";
+            dangerLevel = "Safe";
+            ETA = "Dummy Data";
+            tasksRef = ref;
+
+
+
+
+        }
+        public void add2Fire() {
+            HashMap<String,String> journey=new HashMap<>();
+            journey.put("Name",userName);
+            journey.put("TrustedName",trustedUserName);
+            journey.put("StartCords", String.valueOf(startCords));
+            journey.put("EndCords", String.valueOf(destCords));
+            journey.put("CurrentCords", String.valueOf(currCords));
+            journey.put("DangerLevel", dangerLevel);
+            journey.put("journeyStatus", journeyStatus);
+            journey.put("ETA", ETA);
+
+
+
+            tasksRef.setValue(journey);
+        }
+
+
+
+    }
 
 
 }

@@ -3,9 +3,17 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/sill/StudioProjects/CM2305/app/src/main/res/layout/activity_login.xml" value="0.17058572039333048" />
         <entry key="..\:/Users/sill/StudioProjects/CM2305/app/src/main/res/layout/activity_maps.xml" value="0.3109375" />
+        <entry key="..\:/Users/sill/StudioProjects/CM2305/app/src/main/res/layout/fragment_add_contact.xml" value="0.3302083333333333" />
+        <entry key="..\:/Users/sill/StudioProjects/CM2305/app/src/main/res/layout/fragment_add_location.xml" value="0.3302083333333333" />
+        <entry key="..\:/Users/sill/StudioProjects/CM2305/app/src/main/res/layout/fragment_view_account.xml" value="0.3302083333333333" />
+        <entry key="..\:/Users/sill/StudioProjects/CM2305/app/src/main/res/layout/fragment_view_contact.xml" value="0.3302083333333333" />
+        <entry key="..\:/Users/sill/StudioProjects/CM2305/app/src/main/res/layout/fragment_view_location.xml" value="0.3302083333333333" />
+        <entry key="..\:/Users/sill/StudioProjects/CM2305/app/src/main/res/layout/simple_list_item_1.xml" value="0.17058572039333048" />
+        <entry key="..\:/Users/sill/StudioProjects/CM2305/app/src/main/res/layout/trusted_disp.xml" value="0.33" />
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK" />
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_X" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK" />
 </project>

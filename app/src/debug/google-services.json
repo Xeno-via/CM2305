@@ -1,15 +1,45 @@
 {
   "project_info": {
     "project_number": "644954159247",
+    "firebase_url": "https://night-time-security-app-default-rtdb.europe-west1.firebasedatabase.app",
     "project_id": "night-time-security-app",
     "storage_bucket": "night-time-security-app.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:644954159247:android:7b5c7cc88daf55f6ca58fa",
+        "mobilesdk_app_id": "1:644954159247:android:88b05f5fea84982dca58fa",
         "android_client_info": {
           "package_name": "com.example.cm2305"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "644954159247-3u581nfec7ba202pcpgf5n7rf6fs6m58.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBFwVdXF5baLcNHwaMPiaP5xRGfewZngl8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "644954159247-3u581nfec7ba202pcpgf5n7rf6fs6m58.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:644954159247:android:80125594070119a3ca58fa",
+        "android_client_info": {
+          "package_name": "com.example.cm2305.gms"
         }
       },
       "oauth_client": [
