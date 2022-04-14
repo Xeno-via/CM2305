@@ -3,6 +3,7 @@ package com.example.cm2305;
 import androidx.fragment.app.FragmentActivity;
 
 import android.app.AlertDialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -203,11 +204,6 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
                 public void onSuccess(Location location) {
                     updateVals(location);
 
-
-
-
-
-
                 }
             });
         }
@@ -311,7 +307,18 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     // do something when the button is clicked
                     public void onClick(DialogInterface arg0, int arg1) {
-                        finish();
+
+                        String journeyStatus = "Cancelled";
+                        tasksRef.child("journeyStatus").setValue(journeyStatus);
+                        Context context = getApplicationContext();
+                        PackageManager packageManager = context.getPackageManager();
+                        Intent intent = packageManager.getLaunchIntentForPackage(context.getPackageName());
+                        ComponentName componentName = intent.getComponent();
+                        Intent mainIntent = Intent.makeRestartActivityTask(componentName);
+                        context.startActivity(mainIntent);
+                        Runtime.getRuntime().exit(0);
+
+
                         //close();
                     }
                 })
