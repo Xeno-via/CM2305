@@ -2,7 +2,9 @@ package com.example.cm2305;
 
 import androidx.fragment.app.FragmentActivity;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -160,6 +162,28 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
                 }
         }
     }
+    @Override
+    public void onBackPressed() {
+        //Handle AlertDialog here.
+        //Activity must not stop + Application must not close without user confirmation.
+        exitByBackKey();
+    }
+
+    @Override
+    protected void onDestroy() {
+
+        super.onDestroy();
+        currentlocMark = null;
+        if (tasksRef != null)
+        {   StopLocationUpdates();
+            mCircle.remove();
+
+            String journeyStatus = "Cancelled";
+            tasksRef.child("journeyStatus").setValue(journeyStatus);
+        }
+
+
+    }
 
     private void StartLocationUpdates(){
         fusedLocationProviderClient.requestLocationUpdates(locationRequest,locationCallBack, Looper.getMainLooper());
@@ -222,12 +246,16 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
 
         if (currentlocMark != null)
         {
+            //currentlocMark = mMap.addMarker(new MarkerOptions().position(coords).title("Current Location").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA)));
             currentlocMark.setPosition(new LatLng(latitude,longitude));
+            Log.d("ADebugTag", "Value: " + 'P');
+
 
         }
         else
         {
             currentlocMark = mMap.addMarker(new MarkerOptions().position(coords).title("Current Location").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA)));
+            Log.d("ADebugTag", "Value: " + 'H');
         }
 
 
@@ -277,6 +305,26 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
 
     }
 
+    private void exitByBackKey() {
+        AlertDialog alertbox = new AlertDialog.Builder(this)
+                .setMessage("Do you want to Log Out? \n Doing so will cancel an In Progress Journey")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    // do something when the button is clicked
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        finish();
+                        //close();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    // do something when the button is clicked
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        //nothing
+                    }
+                })
+                .show();
+
+
+    }
 
     /**
      * Manipulates the map once available.
