@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -31,6 +32,12 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
+
+import android.app.Activity;
+import android.hardware.SensorManager;
+import com.squareup.seismic.ShakeDetector;
+
 
 //volley
 import com.android.volley.Request;
@@ -78,15 +85,17 @@ import com.what3words.javawrapper.request.Coordinates;
 import com.what3words.javawrapper.response.ConvertTo3WA;
 
 
+import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
 import io.reactivex.rxjava3.schedulers.Schedulers;
 
-public class  MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class  MapsActivity extends FragmentActivity implements OnMapReadyCallback, ShakeDetector.Listener {
 
     private GoogleMap mMap;
     private ActivityMapsBinding binding;
@@ -110,11 +119,24 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
 
 
 
+    @Override public void hearShake() {
+        if (polyline != null) {
+            dangerCheck();
+        }
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        ShakeDetector sd = new ShakeDetector(this);
+
+        // A non-zero delay is required for Android 12 and up (https://github.com/square/seismic/issues/24)
+        int sensorDelay = SensorManager.SENSOR_DELAY_GAME;
+
+        sd.start(sensorManager, sensorDelay);
 
 
         //binding = ActivityMapsBinding.inflate(getLayoutInflater());
@@ -270,6 +292,10 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
             Location.distanceBetween( location.getLatitude(), location.getLongitude(),
                     mCircle.getCenter().latitude, mCircle.getCenter().longitude, results);
 
+            if (hasDeviated != true) {
+                dangerCheck();
+            }
+
             if( results[0] > mCircle.getRadius()  ){
                 Toast.makeText(getBaseContext(), "Outside, distance from center: " + results[0] + " radius: " + mCircle.getRadius(), Toast.LENGTH_LONG).show();
             } else {
@@ -300,7 +326,31 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
 
 
     }
+    public void dangerCheck() {
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle("Danger Detected")
+                .setMessage("We have detected anomalous behaviour, Are you Okay? ")
+                .setPositiveButton("I'm Okay", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Nothing
+                    }
+                })
+                .setNegativeButton("I'm in Danger", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Nothing
+                        String dangerLevel = "Danger";
+                        tasksRef.child("DangerLevel").setValue(dangerLevel);
+                    }
+                })
+                .create();
+        DialogTimeoutListener listener = new DialogTimeoutListener(tasksRef);
+        dialog.setOnShowListener(listener);
+        dialog.setOnDismissListener(listener);
+        dialog.show();
 
+    }
     private void exitByBackKey() {
         AlertDialog alertbox = new AlertDialog.Builder(this)
                 .setMessage("Do you want to Log Out? \n Doing so will cancel an In Progress Journey")
@@ -498,9 +548,6 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
 
         }
 
-
-
-
             });
 
         button3.setOnClickListener(new View.OnClickListener() {public void onClick(View v) {
@@ -536,6 +583,8 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
     public static boolean isPointOnPolyline(LatLng point, PolylineOptions polyline, double tolerance) {
         return PolyUtil.isLocationOnPath(point, polyline.getPoints(), false, tolerance);
     }
+
+
 
     public class Journey {
         public LatLng startCords;
@@ -584,7 +633,56 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
 
 
     }
+    private static class DialogTimeoutListener
+            implements DialogInterface.OnShowListener, DialogInterface.OnDismissListener {
+        private static final int AUTO_DISMISS_MILLIS = 1 * 60 * 1000;
+        private CountDownTimer mCountDownTimer;
+        private DatabaseReference taskRef;
 
+        public DialogTimeoutListener(DatabaseReference TaskRef){
+            taskRef = TaskRef;
+        }
 
+        @Override
+        public void onShow(final DialogInterface dialog) {
+            final Button defaultButton = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE);
+            final CharSequence positiveButtonText = defaultButton.getText();
+            mCountDownTimer = new CountDownTimer(AUTO_DISMISS_MILLIS, 100) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+                    if (millisUntilFinished > 60000) {
+                        defaultButton.setText(String.format(
+                                Locale.getDefault(), "%s (%d:%02d)",
+                                positiveButtonText,
+                                TimeUnit.MILLISECONDS.toMinutes(millisUntilFinished),
+                                TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished % 60000)
+                        ));
+                    } else {
+                        defaultButton.setText(String.format(
+                                Locale.getDefault(), "%s (%d)",
+                                positiveButtonText,
+                                TimeUnit.MILLISECONDS.toSeconds(millisUntilFinished) + 1 //add one so it never displays zero
+                        ));
+                    }
+                }
+
+                @Override
+                public void onFinish() {
+                    if (((AlertDialog) dialog).isShowing()) {
+
+                        String dangerLevel = "Danger";
+                        taskRef.child("DangerLevel").setValue(dangerLevel);
+                        dialog.dismiss();
+                    }
+                }
+            };
+            mCountDownTimer.start();
+        }
+
+        @Override
+        public void onDismiss(DialogInterface dialog) {
+            mCountDownTimer.cancel();
+        }
+    }
 }
 
