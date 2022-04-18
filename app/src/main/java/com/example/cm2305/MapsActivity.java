@@ -24,7 +24,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.widget.TextView;
 import org.json.*;
-
+import java.util.concurrent.TimeUnit;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -36,6 +36,14 @@ import androidx.core.content.ContextCompat;
 
 import android.app.Activity;
 import android.hardware.SensorManager;
+
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
 import com.squareup.seismic.ShakeDetector;
 
 
@@ -151,6 +159,18 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
         mapFragment.getMapAsync(this);
         What3Words(51.2423, -0.12423);
 
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+
+            String name = user.getDisplayName();
+            String email = user.getEmail();
+            Log.d("ADebugTag", "Value: " + email);
+
+
+        } else {
+            Log.d("ADebugTag", "Value: " + '8');
+        }
+
         locationRequest.setInterval(5000);
         locationRequest.setFastestInterval(5000);
         locationRequest.setPriority(locationRequest.PRIORITY_HIGH_ACCURACY);
@@ -189,6 +209,9 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
     public void onBackPressed() {
         //Handle AlertDialog here.
         //Activity must not stop + Application must not close without user confirmation.
+
+
+
         exitByBackKey();
     }
 
@@ -200,9 +223,8 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
         if (tasksRef != null)
         {   StopLocationUpdates();
             mCircle.remove();
+            decodedPath = null;
 
-            String journeyStatus = "Cancelled";
-            tasksRef.child("journeyStatus").setValue(journeyStatus);
         }
 
 
@@ -358,15 +380,56 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
                     // do something when the button is clicked
                     public void onClick(DialogInterface arg0, int arg1) {
 
-                        String journeyStatus = "Cancelled";
-                        tasksRef.child("journeyStatus").setValue(journeyStatus);
-                        Context context = getApplicationContext();
+                        if (tasksRef != null)
+                        {
+
+                            tasksRef.child("journeyStatus").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DataSnapshot> task) {
+                                    if (!task.isSuccessful()) {
+                                        Log.e("firebase", "Error getting data", task.getException());
+
+                                    }
+                                    else {
+                                        Log.d("ADebugTag", "Value: " + String.valueOf(task.getResult().getValue()));
+                                        if (String.valueOf(task.getResult().getValue()).equals("Finished")) {
+                                            Log.d("ADebugTag", "Value: " + 'W');
+                                        }
+                                        else{
+                                            String journeyStatus = "Cancelled";
+                                            Log.d("ADebugTag", "Value: " + journeyStatus);
+                                            tasksRef.child("journeyStatus").setValue(journeyStatus);
+
+                                        }
+
+                                    }
+                                }
+                            });
+
+
+
+                        }
+                        else
+                        {
+                            //Do Nothing
+                        }
+
+
+                        StopLocationUpdates();
+
+
+                        FirebaseAuth.getInstance().signOut();
+
+                        restart();
+
+                        /*Context context = getApplicationContext();
                         PackageManager packageManager = context.getPackageManager();
                         Intent intent = packageManager.getLaunchIntentForPackage(context.getPackageName());
                         ComponentName componentName = intent.getComponent();
                         Intent mainIntent = Intent.makeRestartActivityTask(componentName);
                         context.startActivity(mainIntent);
-                        Runtime.getRuntime().exit(0);
+                        Runtime.getRuntime().exit(0);*/
+
 
 
                         //close();
@@ -381,6 +444,27 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
                 .show();
 
 
+    }
+
+    public void restart() {
+        /*Context context = getApplicationContext();
+        PackageManager packageManager = context.getPackageManager();
+        Intent intent = packageManager.getLaunchIntentForPackage(context.getPackageName());
+        ComponentName componentName = intent.getComponent();
+        Intent mainIntent = Intent.makeRestartActivityTask(componentName);
+        context.startActivity(mainIntent);
+        Runtime.getRuntime().exit(0);*/
+        Intent mIntent = new Intent(this,FirebaseUIActivity.class);
+        finishAffinity();
+        startActivity(mIntent);
+    }
+
+    public static void pause(int ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+            System.err.format("IOException: %s%n", e);
+        }
     }
 
     /**

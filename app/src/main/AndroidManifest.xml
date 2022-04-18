@@ -23,7 +23,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CM2305">
         <activity
-            android:name=".ui.login.LoginActivity"
+            android:name=".FirebaseUIActivity"
             android:exported="true"
             android:label="@string/title_activity_login" >
         <intent-filter>
@@ -49,6 +49,7 @@
             android:exported="true"
             android:label="@string/title_activity_maps">
         </activity>
+
         <activity
             android:name=".CheckTrusted"
             android:exported="true"
