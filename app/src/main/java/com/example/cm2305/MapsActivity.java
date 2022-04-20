@@ -3,20 +3,33 @@ package com.example.cm2305;
 import androidx.fragment.app.FragmentActivity;
 
 import android.app.AlertDialog;
+import android.app.SearchManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SearchRecentSuggestionsProvider;
+import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.preference.PreferenceManager;
+import android.provider.SearchRecentSuggestions;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.os.Looper;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CursorAdapter;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.SearchView;
 import android.widget.Toast;
 import android.Manifest;
 import org.json.JSONObject;
@@ -24,6 +37,8 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.widget.TextView;
 import org.json.*;
+
+import java.lang.reflect.Type;
 import java.util.concurrent.TimeUnit;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -32,6 +47,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 
 
 import android.app.Activity;
@@ -44,6 +61,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
+import com.google.gson.Gson;
 import com.squareup.seismic.ShakeDetector;
 
 
@@ -79,7 +97,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.CancellationTokenSource;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-
+import java.util.ArrayList;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DatabaseReference;
@@ -123,15 +141,17 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
     private final CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
     public static List<LatLng> decodedPath;
     public static final String TAG = "Error";
-
+    private TinyDB tinydb;
+    private AlertDialog dialog;
 
 
 
     @Override public void hearShake() {
         if (polyline != null) {
-            dangerCheck();
+            getDangerLevel();
         }
     }
+
 
 
     @Override
@@ -146,7 +166,6 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
 
         sd.start(sensorManager, sensorDelay);
 
-
         //binding = ActivityMapsBinding.inflate(getLayoutInflater());
         //setContentView(binding.getRoot());
         setContentView(R.layout.activity_maps);
@@ -158,6 +177,15 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
         What3Words(51.2423, -0.12423);
+
+
+        tinydb = new TinyDB(this);
+
+
+
+        //get the input like for a normal EditText
+        //String input = editTextSearch.getText().toString();
+
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
@@ -209,9 +237,6 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
     public void onBackPressed() {
         //Handle AlertDialog here.
         //Activity must not stop + Application must not close without user confirmation.
-
-
-
         exitByBackKey();
     }
 
@@ -226,8 +251,6 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
             decodedPath = null;
 
         }
-
-
     }
 
     private void StartLocationUpdates(){
@@ -264,9 +287,6 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
         double longitude = location.getLongitude();
 
         LatLng coords = new LatLng(latitude, longitude);
-
-
-
         EditText simpleEditText = (EditText) findViewById(R.id.simpleEditText);
 
         Log.d("ADebugTag", "Value: " + '1');
@@ -315,7 +335,7 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
                     mCircle.getCenter().latitude, mCircle.getCenter().longitude, results);
 
             if (hasDeviated != true) {
-                dangerCheck();
+                getDangerLevel();
             }
 
             if( results[0] > mCircle.getRadius()  ){
@@ -337,6 +357,26 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
 
 
     }
+    public void getDangerLevel() {
+        tasksRef.child("DangerLevel").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if (!task.isSuccessful()) {
+                    Log.e("firebase", "Error getting data", task.getException());
+
+                }
+                else {
+                    String state = String.valueOf(task.getResult().getValue());
+                    dangerCheck(state);
+                    Log.d("ADebugTag", "Value: " + state);
+
+                }
+            }
+        });
+
+
+    }
+
 
     private void drawMarkerWithCircle(LatLng position){
         double radiusInMeters = 20.0;
@@ -348,30 +388,39 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
 
 
     }
-    public void dangerCheck() {
-        AlertDialog dialog = new AlertDialog.Builder(this)
-                .setTitle("Danger Detected")
-                .setMessage("We have detected anomalous behaviour, Are you Okay? ")
-                .setPositiveButton("I'm Okay", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Nothing
-                    }
-                })
-                .setNegativeButton("I'm in Danger", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Nothing
-                        String dangerLevel = "Danger";
-                        tasksRef.child("DangerLevel").setValue(dangerLevel);
-                    }
-                })
-                .create();
-        DialogTimeoutListener listener = new DialogTimeoutListener(tasksRef);
-        dialog.setOnShowListener(listener);
-        dialog.setOnDismissListener(listener);
-        dialog.show();
+    public void dangerCheck(String state) {
 
+
+
+        if(dialog != null && (dialog.isShowing() || state != "Safe")) {
+            //Do Nothing -- One already open
+        }
+        else{
+            dialog = new AlertDialog.Builder(this)
+                    .setTitle("Danger Detected")
+                    .setMessage("We have detected anomalous behaviour, Are you Okay? ")
+                    .setPositiveButton("I'm Okay", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Nothing
+                            String dangerLevel = "Safe";
+                            tasksRef.child("DangerLevel").setValue(dangerLevel);
+                        }
+                    })
+                    .setNegativeButton("I'm in Danger", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // Nothing
+                            String dangerLevel = "Danger";
+                            tasksRef.child("DangerLevel").setValue(dangerLevel);
+                        }
+                    })
+                    .create();
+            DialogTimeoutListener listener = new DialogTimeoutListener(tasksRef);
+            dialog.setOnShowListener(listener);
+            dialog.setOnDismissListener(listener);
+            dialog.show();
+        }
     }
     private void exitByBackKey() {
         AlertDialog alertbox = new AlertDialog.Builder(this)
@@ -405,34 +454,15 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
                                     }
                                 }
                             });
-
-
-
                         }
                         else
                         {
                             //Do Nothing
                         }
-
-
                         StopLocationUpdates();
-
-
                         FirebaseAuth.getInstance().signOut();
-
                         restart();
 
-                        /*Context context = getApplicationContext();
-                        PackageManager packageManager = context.getPackageManager();
-                        Intent intent = packageManager.getLaunchIntentForPackage(context.getPackageName());
-                        ComponentName componentName = intent.getComponent();
-                        Intent mainIntent = Intent.makeRestartActivityTask(componentName);
-                        context.startActivity(mainIntent);
-                        Runtime.getRuntime().exit(0);*/
-
-
-
-                        //close();
                     }
                 })
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -442,10 +472,31 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
                     }
                 })
                 .show();
+    }
+
+    public void getSuggested(ArrayList<String> list) {
+        tinydb.putListString("yourkey",list);
+        AutoCompleteTextView editTextSearch = findViewById(R.id.actv);
+        Button buttonClear = (Button) findViewById(R.id.buttonClear);
+        buttonClear.setVisibility(View.VISIBLE);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(),
+                R.layout.custom_list_item, R.id.text_view_list_item, list);
+        editTextSearch.setAdapter(adapter);
+        editTextSearch.setThreshold(1);
+
+
+
+
+        buttonClear.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               clearSuggested();
+               buttonClear.setVisibility(View.INVISIBLE);
+           }
+        });
 
 
     }
-
     public void restart() {
         /*Context context = getApplicationContext();
         PackageManager packageManager = context.getPackageManager();
@@ -481,14 +532,6 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
         mMap = googleMap;
         updateGPS();
 
-        //Log.d("ADebugTag", "Value: " + editTextValue);
-        //String[] arr = editTextValue.split(",");
-        Log.d("ADebugTag", "Value: " + '2');
-
-        //LatLng currentLoc = new LatLng(, Double.parseDouble(arr[1]));
-        //mMap.addMarker(new MarkerOptions().position(currentLoc).title("Current Location"));
-        //mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLoc));
-
         FirebaseApp.initializeApp(this);
         FirebaseDatabase database = FirebaseDatabase.getInstance("https://night-time-security-app-default-rtdb.europe-west1.firebasedatabase.app/");
         DatabaseReference myRef = database.getReference("Journeys");
@@ -498,16 +541,21 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
         Button button3 = (Button) findViewById(R.id.button3);
         stopButton.setVisibility(View.INVISIBLE);
         TextView textView = (TextView) findViewById(R.id.textView);
-        EditText simpleEditText2 = (EditText) findViewById(R.id.simpleEditText2);
+        AutoCompleteTextView editTextSearch = findViewById(R.id.actv);
 
-        simpleEditText2.addTextChangedListener(new TextWatcher() {
+        editTextSearch.addTextChangedListener(new TextWatcher() {
             @Override
-            public void afterTextChanged(Editable s) {}
+            public void afterTextChanged(Editable s) {
+
+            }
 
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 button.setVisibility(s.toString().trim().length() > 0 ? View.VISIBLE : View.INVISIBLE);
+                ArrayList<String> list = tinydb.getListString("yourkey");
+
+                getSuggested(list);
             }});
 
 
@@ -517,53 +565,28 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
                 button.setVisibility(View.INVISIBLE);
                 stopButton.setVisibility(View.VISIBLE);
                 EditText simpleEditText = (EditText) findViewById(R.id.simpleEditText);
-
-
-
                 String editTextValue = simpleEditText.getText().toString();
-                String editTextValue2 = simpleEditText2.getText().toString();
+                String editTextValue2 = editTextSearch.getText().toString();
+                Button buttonClear = (Button) findViewById(R.id.buttonClear);
+                buttonClear.setVisibility(View.INVISIBLE);
+
+                addToSuggested(editTextValue2);
+
+
                 TextView textView = (TextView) findViewById(R.id.textView);
-
-
-
-
                 String str_origin = "origin="+editTextValue;
-
-                // Destination of route
-
-
                 String[] arr = editTextValue2.split(" ");
-
-                String strDestName = String.join("+", arr);
-
-
+                String strDestName = String.join("+", arr);// Destination of route
                 String str_dest = "destination="+strDestName;
-
-
-
                 String travel_Mode = "mode=walking";
-
-                // Key
-                String Api = BuildConfig.MAPS_API_KEY;
-                String key = "key=" + Api;
-
-                // Output format
-                String output = "json?";
-
-                // Building the parameters to the web service
+                String Api = BuildConfig.MAPS_API_KEY;// Key
+                String key = "key=" + Api; // Output format
+                String output = "json?";// Building the parameters to the web service
                 String parameters = str_origin+"&"+str_dest+"&"+travel_Mode+"&"+key;
-
-
-
                 // Building the url to the web service
                 String url = "https://maps.googleapis.com/maps/api/directions/json?"+parameters;
 
-
                 //Log.d("ADebugTag", "Value: " + url);
-
-                //myRef.setValue("Hello, World!");
-
-
 
                 JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                         (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
@@ -580,11 +603,9 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
                                     decodedPath = PolyUtil.decode(encoded_Route);
                                     polyline = mMap.addPolyline(new PolylineOptions().addAll(decodedPath));
 
-
                                     String start_lat = obj.getJSONArray("routes").getJSONObject(0).getJSONArray("legs").getJSONObject(0).getJSONObject("start_location").getString("lat");
                                     String start_long = obj.getJSONArray("routes").getJSONObject(0).getJSONArray("legs").getJSONObject(0).getJSONObject("start_location").getString("lng");
                                     LatLng startCords = new LatLng( Double.parseDouble(start_lat), Double.parseDouble(start_long));
-
 
                                     String end_lat = obj.getJSONArray("routes").getJSONObject(0).getJSONArray("legs").getJSONObject(0).getJSONObject("end_location").getString("lat");
                                     String end_long = obj.getJSONArray("routes").getJSONObject(0).getJSONArray("legs").getJSONObject(0).getJSONObject("end_location").getString("lng");
@@ -593,10 +614,7 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
                                     drawMarkerWithCircle(destCords);
                                     tasksRef = myRef.push();
                                     Journey journey = new Journey(startCords,destCords,"UserTest","TrustedTest",tasksRef);
-
                                     journey.add2Fire();
-
-
 
                                 } catch (JSONException e) {
                                     e.printStackTrace();
@@ -612,12 +630,8 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
                         });
 
                 mQueue.add(jsonObjectRequest);
-
-
-
             }
         });
-
 
         stopButton.setOnClickListener(new View.OnClickListener() {public void onClick(View v) {
 
@@ -629,6 +643,7 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
             destM.remove();
             String journeyStatus = "Finished";
             tasksRef.child("journeyStatus").setValue(journeyStatus);
+            dialog = null;
 
         }
 
@@ -641,11 +656,28 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
         }
         });
 
+    }
+    public void addToSuggested(String editTextValue2){
+        ArrayList<String> list = tinydb.getListString("yourkey");
+        boolean contains = list.contains(editTextValue2);
 
 
+        if ((contains != true)) {
+            list.add(editTextValue2);
+            tinydb.putListString("yourkey",list);
+
+        } else {
+            //Do Zilch
+        }
 
     }
 
+    public void clearSuggested(){
+        ArrayList<String> list = tinydb.getListString("yourkey");
+        list.clear();
+        tinydb.putListString("yourkey",list);
+
+    }
 
     public void What3Words(Double Lat,Double Long){
         What3WordsV3 wrapper = new What3WordsV3("ZQ0XPH3L", this);
@@ -731,6 +763,8 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
         public void onShow(final DialogInterface dialog) {
             final Button defaultButton = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE);
             final CharSequence positiveButtonText = defaultButton.getText();
+            String dangerLevel = "Warning";
+            taskRef.child("DangerLevel").setValue(dangerLevel);
             mCountDownTimer = new CountDownTimer(AUTO_DISMISS_MILLIS, 100) {
                 @Override
                 public void onTick(long millisUntilFinished) {
@@ -768,5 +802,10 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
             mCountDownTimer.cancel();
         }
     }
+
+
+
+
+
 }
 

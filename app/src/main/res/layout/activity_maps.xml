@@ -9,34 +9,28 @@
     tools:context=".MapsActivity">-->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:translationY="0dp">
 
 
     <fragment
         android:id="@+id/map"
+        class="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        class="com.google.android.gms.maps.SupportMapFragment">
-    </fragment>
+        android:layout_height="match_parent"></fragment>
+
     <TextView
-    android:id="@+id/textView"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:textColor="@android:color/black"
-    android:textSize="20sp" />
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/black"
+        android:textSize="20sp" />
 
     <EditText
         android:id="@+id/simpleEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:translationY="55dp" />
-
-    <EditText
-        android:id="@+id/simpleEditText2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minHeight="48dp"
-        android:translationY="120dp" />
 
     <Button
         android:id="@+id/button_send"
@@ -45,8 +39,8 @@
         android:insetRight="0dp"
         android:onClick="sendMessage"
         android:text="Start Tracking"
-        android:visibility="invisible"
-        android:translationX="250dp" />
+        android:translationX="250dp"
+        android:visibility="invisible" />
 
     <Button
         android:id="@+id/button2"
@@ -63,6 +57,35 @@
         android:text="Check Users"
         android:translationX="50dp"
         android:translationY="650dp" />
+
+    <AutoCompleteTextView
+        android:id="@+id/actv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:completionHint="Enter a Destination"
+        android:completionThreshold="1"
+        android:dropDownAnchor="@id/text_view_countries"
+        android:hint="Enter a Destination"
+        android:popupBackground="@color/colorAccent"
+        android:translationY="110dp" />
+
+    <TextView
+        android:id="@+id/text_view_countries"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="16dp"
+        android:text="Previous Searches"
+        android:textSize="20sp"
+        android:translationY="160dp" />
+
+    <Button
+        android:id="@+id/buttonClear"
+        android:layout_width="174dp"
+        android:layout_height="wrap_content"
+        android:text="Clear Search History"
+        android:translationX="30dp"
+        android:translationY="0dp"
+        android:visibility="invisible" />
 
 
 </FrameLayout>

@@ -15,4 +15,11 @@
     <string name="track_contacts">Track Contacts</string>
 
 
+
+
+    <string-array name="PreviousDest">
+        <item>London</item>
+    </string-array>
+
+
 </resources>
