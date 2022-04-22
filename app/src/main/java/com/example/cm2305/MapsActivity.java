@@ -1,35 +1,23 @@
 package com.example.cm2305;
 
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.FragmentActivity;
-
 import android.app.AlertDialog;
-import android.app.SearchManager;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SearchRecentSuggestionsProvider;
-import android.content.SharedPreferences;
-import android.database.Cursor;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.preference.PreferenceManager;
-import android.provider.SearchRecentSuggestions;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.os.Looper;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.SearchView;
 import android.widget.Toast;
 import android.Manifest;
 import org.json.JSONObject;
@@ -38,30 +26,25 @@ import android.location.Location;
 import android.widget.TextView;
 import org.json.*;
 
-import java.lang.reflect.Type;
 import java.util.concurrent.TimeUnit;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-
-
-import android.app.Activity;
 import android.hardware.SensorManager;
 
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
-import com.google.gson.Gson;
+
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.seismic.ShakeDetector;
 
 
@@ -79,7 +62,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
+
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
@@ -90,12 +73,11 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
+
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.CancellationTokenSource;
-import com.google.android.gms.tasks.OnFailureListener;
+
 import com.google.android.gms.tasks.OnSuccessListener;
 import java.util.ArrayList;
 
@@ -111,11 +93,8 @@ import com.what3words.javawrapper.request.Coordinates;
 import com.what3words.javawrapper.response.ConvertTo3WA;
 
 
-import java.util.Locale;
-import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicReference;
+
+
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
@@ -140,7 +119,6 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
     LocationCallback locationCallBack;
     private final CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
     public static List<LatLng> decodedPath;
-    public static final String TAG = "Error";
     private TinyDB tinydb;
     private AlertDialog dialog;
 
@@ -166,8 +144,6 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
 
         sd.start(sensorManager, sensorDelay);
 
-        //binding = ActivityMapsBinding.inflate(getLayoutInflater());
-        //setContentView(binding.getRoot());
         setContentView(R.layout.activity_maps);
         mTextViewResult = findViewById(R.id.textView);
         mQueue = Volley.newRequestQueue(this);
@@ -181,23 +157,6 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
 
         tinydb = new TinyDB(this);
 
-
-
-        //get the input like for a normal EditText
-        //String input = editTextSearch.getText().toString();
-
-
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
-
-            String name = user.getDisplayName();
-            String email = user.getEmail();
-            Log.d("ADebugTag", "Value: " + email);
-
-
-        } else {
-            Log.d("ADebugTag", "Value: " + '8');
-        }
 
         locationRequest.setInterval(5000);
         locationRequest.setFastestInterval(5000);
@@ -263,6 +222,22 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
         fusedLocationProviderClient.removeLocationUpdates(locationCallBack);
     }
 
+    private String GetCurrentUser(){
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+
+            String name = user.getDisplayName();
+            String email = user.getEmail();
+
+            return email;
+
+
+        } else {
+
+            return null;
+        }
+    }
+
     private void updateGPS() { fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(MapsActivity.this);
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
@@ -289,7 +264,7 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
         LatLng coords = new LatLng(latitude, longitude);
         EditText simpleEditText = (EditText) findViewById(R.id.simpleEditText);
 
-        Log.d("ADebugTag", "Value: " + '1');
+
         simpleEditText.setText(latitude+""+","+longitude+"",TextView.BufferType.EDITABLE);
         simpleEditText.setEnabled(false);
         TextView textView = (TextView) findViewById(R.id.textView);
@@ -308,14 +283,14 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
         {
             //currentlocMark = mMap.addMarker(new MarkerOptions().position(coords).title("Current Location").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA)));
             currentlocMark.setPosition(new LatLng(latitude,longitude));
-            Log.d("ADebugTag", "Value: " + 'P');
+            //Log.d("ADebugTag", "Value: " + 'P');
 
 
         }
         else
         {
             currentlocMark = mMap.addMarker(new MarkerOptions().position(coords).title("Current Location").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA)));
-            Log.d("ADebugTag", "Value: " + 'H');
+            //Log.d("ADebugTag", "Value: " + 'H');
         }
 
 
@@ -334,7 +309,7 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
             Location.distanceBetween( location.getLatitude(), location.getLongitude(),
                     mCircle.getCenter().latitude, mCircle.getCenter().longitude, results);
 
-            if (hasDeviated != true) {
+            if (!hasDeviated) {
                 getDangerLevel();
             }
 
@@ -358,7 +333,8 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
 
     }
     public void getDangerLevel() {
-        tasksRef.child("DangerLevel").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+
+        tasksRef.get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
                 if (!task.isSuccessful()) {
@@ -366,9 +342,11 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
 
                 }
                 else {
-                    String state = String.valueOf(task.getResult().getValue());
+
+                    String state = String.valueOf(task.getResult().child("DangerLevel").getValue());
+                    //String prevJourney = String.valueOf(task.getResult().child("journeyStatus").getValue());
                     dangerCheck(state);
-                    Log.d("ADebugTag", "Value: " + state);
+
 
                 }
             }
@@ -390,38 +368,43 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
     }
     public void dangerCheck(String state) {
 
+        //if( (dialog != null && !prevJourney.equals("In Progress")) ||  (dialog != null && (dialog.isShowing() || state != "Safe"))) {
+        if ((dialog == null && state.equals("Safe")) || (dialog != null && !dialog.isShowing() && state.equals("Safe")) ){
 
-
-        if(dialog != null && (dialog.isShowing() || state != "Safe")) {
-            //Do Nothing -- One already open
+            buildDialog();
         }
         else{
-            dialog = new AlertDialog.Builder(this)
-                    .setTitle("Danger Detected")
-                    .setMessage("We have detected anomalous behaviour, Are you Okay? ")
-                    .setPositiveButton("I'm Okay", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            // Nothing
-                            String dangerLevel = "Safe";
-                            tasksRef.child("DangerLevel").setValue(dangerLevel);
-                        }
-                    })
-                    .setNegativeButton("I'm in Danger", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            // Nothing
-                            String dangerLevel = "Danger";
-                            tasksRef.child("DangerLevel").setValue(dangerLevel);
-                        }
-                    })
-                    .create();
-            DialogTimeoutListener listener = new DialogTimeoutListener(tasksRef);
-            dialog.setOnShowListener(listener);
-            dialog.setOnDismissListener(listener);
-            dialog.show();
+            //Do Nothing -- One already open
         }
     }
+
+    private void buildDialog() {
+        dialog = new AlertDialog.Builder(this)
+                .setTitle("Danger Detected")
+                .setMessage("We have detected anomalous behaviour, Are you Okay? ")
+                .setPositiveButton("I'm Okay", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Nothing
+                        String dangerLevel = "Safe";
+                        tasksRef.child("DangerLevel").setValue(dangerLevel);
+                    }
+                })
+                .setNegativeButton("I'm in Danger", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Nothing
+                        String dangerLevel = "Danger";
+                        tasksRef.child("DangerLevel").setValue(dangerLevel);
+                    }
+                })
+                .create();
+        DialogTimeoutListener listener = new DialogTimeoutListener(tasksRef,1);
+        dialog.setOnShowListener(listener);
+        dialog.setOnDismissListener(listener);
+        dialog.show();
+    }
+
     private void exitByBackKey() {
         AlertDialog alertbox = new AlertDialog.Builder(this)
                 .setMessage("Do you want to Log Out? \n Doing so will cancel an In Progress Journey")
@@ -440,13 +423,13 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
 
                                     }
                                     else {
-                                        Log.d("ADebugTag", "Value: " + String.valueOf(task.getResult().getValue()));
+                                        //Log.d("ADebugTag", "Value: " + String.valueOf(task.getResult().getValue()));
                                         if (String.valueOf(task.getResult().getValue()).equals("Finished")) {
-                                            Log.d("ADebugTag", "Value: " + 'W');
+                                           //Log.d("ADebugTag", "Value: " + 'W');
                                         }
                                         else{
                                             String journeyStatus = "Cancelled";
-                                            Log.d("ADebugTag", "Value: " + journeyStatus);
+                                            //Log.d("ADebugTag", "Value: " + journeyStatus);
                                             tasksRef.child("journeyStatus").setValue(journeyStatus);
 
                                         }
@@ -479,7 +462,7 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
         AutoCompleteTextView editTextSearch = findViewById(R.id.actv);
         Button buttonClear = (Button) findViewById(R.id.buttonClear);
         buttonClear.setVisibility(View.VISIBLE);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(),
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(),
                 R.layout.custom_list_item, R.id.text_view_list_item, list);
         editTextSearch.setAdapter(adapter);
         editTextSearch.setThreshold(1);
@@ -560,6 +543,7 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
 
 
         button.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.O)
             public void onClick(View v) {
                 StartLocationUpdates();
                 button.setVisibility(View.INVISIBLE);
@@ -581,7 +565,6 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
                 String travel_Mode = "mode=walking";
                 String Api = BuildConfig.MAPS_API_KEY;// Key
                 String key = "key=" + Api; // Output format
-                String output = "json?";// Building the parameters to the web service
                 String parameters = str_origin+"&"+str_dest+"&"+travel_Mode+"&"+key;
                 // Building the url to the web service
                 String url = "https://maps.googleapis.com/maps/api/directions/json?"+parameters;
@@ -613,13 +596,27 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
                                     destM = mMap.addMarker(new MarkerOptions().position(destCords).title("Destination Location"));
                                     drawMarkerWithCircle(destCords);
                                     tasksRef = myRef.push();
-                                    Journey journey = new Journey(startCords,destCords,"UserTest","TrustedTest",tasksRef);
+                                    Journey journey = new Journey(startCords,destCords,GetCurrentUser(),"TrustedTest",tasksRef);
                                     journey.add2Fire();
 
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
+                                tasksRef.child("DangerLevel").addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        // This method is called once with the initial value and again
+                                        // whenever data at this location is updated.
+                                        String value = dataSnapshot.getValue(String.class);
+                                        if (value == "Danger"){
+                                            dangerZone();}
+                                    }
 
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+                                        Log.w("TAG", "Failed to read value.", error.toException());
+                                    }
+                                });
                             }
                         }, new Response.ErrorListener() {
 
@@ -633,6 +630,9 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
             }
         });
 
+
+
+
         stopButton.setOnClickListener(new View.OnClickListener() {public void onClick(View v) {
 
             StopLocationUpdates();
@@ -644,6 +644,7 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
             String journeyStatus = "Finished";
             tasksRef.child("journeyStatus").setValue(journeyStatus);
             dialog = null;
+            polyline = null;
 
         }
 
@@ -662,7 +663,7 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
         boolean contains = list.contains(editTextValue2);
 
 
-        if ((contains != true)) {
+        if ((!contains)) {
             list.add(editTextValue2);
             tinydb.putListString("yourkey",list);
 
@@ -676,6 +677,43 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
         ArrayList<String> list = tinydb.getListString("yourkey");
         list.clear();
         tinydb.putListString("yourkey",list);
+
+    }
+
+    public void dangerZone(){
+        dialog = new AlertDialog.Builder(this)
+                .setTitle("Danger Detected")
+                .setMessage("We have set your status as: In Danger")
+                .setPositiveButton("I'm Now Okay", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Nothing
+                        String dangerLevel = "Safe";
+                        tasksRef.child("DangerLevel").setValue(dangerLevel);
+                    }
+                })
+                .setNegativeButton("Call Emergency Services", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(Intent.ACTION_DIAL);
+                        intent.setData(Uri.parse("tel:999"));
+                        startActivity(intent);
+
+                    }
+                })
+                .create();
+        DialogTimeoutListener listener = new DialogTimeoutListener(tasksRef,2);
+        dialog.setOnShowListener(listener);
+        dialog.setOnDismissListener(listener);
+        dialog.show();
+        Button btnPositive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+        Button btnNegative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
+        LinearLayout.LayoutParams positiveButtonLL = (LinearLayout.LayoutParams) btnPositive.getLayoutParams();
+        positiveButtonLL.gravity = Gravity.CENTER;
+        btnPositive.setLayoutParams(positiveButtonLL);
+        btnNegative.setLayoutParams(positiveButtonLL);
+
+
 
     }
 
@@ -712,7 +750,7 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
         public String journeyStatus;
         public String ETA;
         public DatabaseReference tasksRef;
-        public int journeyID;
+
 
 
         public Journey(LatLng start, LatLng dest, String user, String trusted, DatabaseReference ref){
@@ -754,17 +792,17 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
         private static final int AUTO_DISMISS_MILLIS = 1 * 60 * 1000;
         private CountDownTimer mCountDownTimer;
         private DatabaseReference taskRef;
+        private Integer arg;
 
-        public DialogTimeoutListener(DatabaseReference TaskRef){
-            taskRef = TaskRef;
+        public DialogTimeoutListener(DatabaseReference TaskRef, Integer argument){
+            taskRef = TaskRef;  arg = argument;
         }
 
         @Override
         public void onShow(final DialogInterface dialog) {
             final Button defaultButton = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE);
             final CharSequence positiveButtonText = defaultButton.getText();
-            String dangerLevel = "Warning";
-            taskRef.child("DangerLevel").setValue(dangerLevel);
+
             mCountDownTimer = new CountDownTimer(AUTO_DISMISS_MILLIS, 100) {
                 @Override
                 public void onTick(long millisUntilFinished) {
@@ -794,7 +832,10 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
                     }
                 }
             };
-            mCountDownTimer.start();
+            if (arg == 1){
+            String dangerLevel = "Warning";
+            taskRef.child("DangerLevel").setValue(dangerLevel);
+            mCountDownTimer.start();}
         }
 
         @Override
