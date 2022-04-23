@@ -2,6 +2,7 @@ package com.example.cm2305;
 
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.FragmentActivity;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -16,7 +17,6 @@ import android.os.Looper;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 import android.Manifest;
@@ -26,23 +26,24 @@ import android.location.Location;
 import android.widget.TextView;
 import org.json.*;
 
+
 import java.util.concurrent.TimeUnit;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import androidx.annotation.NonNull;
-
 import androidx.core.app.ActivityCompat;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+
+
 import android.hardware.SensorManager;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
-
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.seismic.ShakeDetector;
@@ -62,7 +63,6 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
@@ -73,11 +73,9 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.CancellationTokenSource;
-
 import com.google.android.gms.tasks.OnSuccessListener;
 import java.util.ArrayList;
 
@@ -90,11 +88,9 @@ import com.example.cm2305.databinding.ActivityMapsBinding;
 import com.google.maps.android.PolyUtil;
 import com.what3words.androidwrapper.What3WordsV3;
 import com.what3words.javawrapper.request.Coordinates;
-import com.what3words.javawrapper.response.ConvertTo3WA;
 
 
-
-
+import java.util.Locale;
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
@@ -121,7 +117,8 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
     public static List<LatLng> decodedPath;
     private TinyDB tinydb;
     private AlertDialog dialog;
-
+    double latitude;
+    double longitude;
 
 
     @Override public void hearShake() {
@@ -145,7 +142,7 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
         sd.start(sensorManager, sensorDelay);
 
         setContentView(R.layout.activity_maps);
-        mTextViewResult = findViewById(R.id.textView);
+        //mTextViewResult = findViewById(R.id.textView);
         mQueue = Volley.newRequestQueue(this);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -157,6 +154,23 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
 
         tinydb = new TinyDB(this);
 
+
+
+        //get the input like for a normal EditText
+        //String input = editTextSearch.getText().toString();
+
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+
+            String name = user.getDisplayName();
+            String email = user.getEmail();
+            Log.d("ADebugTag", "Value: " + email);
+
+
+        } else {
+            Log.d("ADebugTag", "Value: " + '8');
+        }
 
         locationRequest.setInterval(5000);
         locationRequest.setFastestInterval(5000);
@@ -258,16 +272,14 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
 
 
     private void updateVals (Location location) {
-        double latitude = location.getLatitude();
-        double longitude = location.getLongitude();
+        latitude = location.getLatitude();
+        longitude = location.getLongitude();
 
         LatLng coords = new LatLng(latitude, longitude);
-        EditText simpleEditText = (EditText) findViewById(R.id.simpleEditText);
+        String LatLong = (latitude+""+","+longitude+"");
 
-
-        simpleEditText.setText(latitude+""+","+longitude+"",TextView.BufferType.EDITABLE);
-        simpleEditText.setEnabled(false);
-        TextView textView = (TextView) findViewById(R.id.textView);
+        Log.d("ADebugTag", "Value: " + '1');
+        //TextView textView = (TextView) findViewById(R.id.textView);
 
         if (tasksRef != null)
         {
@@ -294,17 +306,17 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
         }
 
 
-        Button stopButton = (Button) findViewById(R.id.button2);
-        Button button = (Button) findViewById(R.id.button_send);
+        FloatingActionButton stopButton = findViewById(R.id.floatingActionButton4);
+        FloatingActionButton button = findViewById(R.id.floatingActionButton2);
 
 
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(coords, 18));
         if (MapsActivity.decodedPath == null) {
-            textView.setText("On Path: " + coords);
+            //textView.setText("On Path: " + coords);
 
         } else {
             boolean hasDeviated = isPointOnPolyline(coords, new PolylineOptions().addAll(decodedPath), 20);
-            textView.setText("On Path: " + hasDeviated + " " + coords);
+            //textView.setText("On Path: " + hasDeviated + " " + coords);
             float[] results = new float[2];
             Location.distanceBetween( location.getLatitude(), location.getLongitude(),
                     mCircle.getCenter().latitude, mCircle.getCenter().longitude, results);
@@ -519,11 +531,11 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
         FirebaseDatabase database = FirebaseDatabase.getInstance("https://night-time-security-app-default-rtdb.europe-west1.firebasedatabase.app/");
         DatabaseReference myRef = database.getReference("Journeys");
 
-        Button stopButton = (Button) findViewById(R.id.button2);
-        Button button = (Button) findViewById(R.id.button_send);
+        FloatingActionButton button =  findViewById(R.id.floatingActionButton2);
         Button button3 = (Button) findViewById(R.id.button3);
-        stopButton.setVisibility(View.INVISIBLE);
-        TextView textView = (TextView) findViewById(R.id.textView);
+        FloatingActionButton FABStart = findViewById(R.id.floatingActionButton2);
+        FloatingActionButton FABEnd = findViewById(R.id.floatingActionButton4);
+        //TextView textView = (TextView) findViewById(R.id.textView);
         AutoCompleteTextView editTextSearch = findViewById(R.id.actv);
 
         editTextSearch.addTextChangedListener(new TextWatcher() {
@@ -542,14 +554,17 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
             }});
 
 
-        button.setOnClickListener(new View.OnClickListener() {
+        FABStart.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.O)
             public void onClick(View v) {
+                Toast toast = Toast.makeText(getApplicationContext(), "Journey Started", Toast.LENGTH_SHORT);
+                toast.show();
+                FABStart.setVisibility(View.INVISIBLE);
+                FABEnd.setVisibility(View.VISIBLE);
                 StartLocationUpdates();
                 button.setVisibility(View.INVISIBLE);
-                stopButton.setVisibility(View.VISIBLE);
-                EditText simpleEditText = (EditText) findViewById(R.id.simpleEditText);
-                String editTextValue = simpleEditText.getText().toString();
+                String LatLong = (latitude+""+","+longitude+"");
+                String editTextValue = LatLong;
                 String editTextValue2 = editTextSearch.getText().toString();
                 Button buttonClear = (Button) findViewById(R.id.buttonClear);
                 buttonClear.setVisibility(View.INVISIBLE);
@@ -557,7 +572,7 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
                 addToSuggested(editTextValue2);
 
 
-                TextView textView = (TextView) findViewById(R.id.textView);
+                //TextView textView = (TextView) findViewById(R.id.textView);
                 String str_origin = "origin="+editTextValue;
                 String[] arr = editTextValue2.split(" ");
                 String strDestName = String.join("+", arr);// Destination of route
@@ -630,14 +645,13 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
             }
         });
 
+        FABEnd.setOnClickListener(new View.OnClickListener() {public void onClick(View v) {
 
-
-
-        stopButton.setOnClickListener(new View.OnClickListener() {public void onClick(View v) {
-
+            Toast toast = Toast.makeText(getApplicationContext(), "Journey Ended", Toast.LENGTH_SHORT);
+            toast.show();
             StopLocationUpdates();
-            stopButton.setVisibility(View.INVISIBLE);
-            button.setVisibility(View.VISIBLE);
+            FABEnd.setVisibility(View.INVISIBLE);
+            FABStart.setVisibility(View.VISIBLE);
             polyline.remove();
             mCircle.remove();
             destM.remove();
@@ -750,7 +764,7 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
         public String journeyStatus;
         public String ETA;
         public DatabaseReference tasksRef;
-
+        public int journeyID;
 
 
         public Journey(LatLng start, LatLng dest, String user, String trusted, DatabaseReference ref){

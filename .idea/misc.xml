@@ -3,22 +3,31 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/sill/StudioProjects/CM2305/app/src/main/res/layout/activity_database.xml" value="0.21419410004275333" />
-        <entry key="..\:/Users/sill/StudioProjects/CM2305/app/src/main/res/layout/activity_firebase_ui.xml" value="0.182129115006413" />
-        <entry key="..\:/Users/sill/StudioProjects/CM2305/app/src/main/res/layout/activity_login.xml" value="0.17058572039333048" />
+        <entry key="..\:/Uni Stuff/CsYear2/Group Project/NewCM2305/app/src/main/res/drawable/ic_launcher_background.xml" value="0.4355" />
+        <entry key="..\:/Uni Stuff/CsYear2/Group Project/NewCM2305/app/src/main/res/layout-w1240dp/activity_login.xml" value="0.25167336010709507" />
+        <entry key="..\:/Uni Stuff/CsYear2/Group Project/NewCM2305/app/src/main/res/layout-w936dp/activity_login.xml" value="0.29375" />
+        <entry key="..\:/Uni Stuff/CsYear2/Group Project/NewCM2305/app/src/main/res/layout/activity_add_account.xml" value="0.33" />
+        <entry key="..\:/Uni Stuff/CsYear2/Group Project/NewCM2305/app/src/main/res/layout/activity_database.xml" value="0.39166666666666666" />
+        <entry key="..\:/Uni Stuff/CsYear2/Group Project/NewCM2305/app/src/main/res/layout/activity_firebase_ui.xml" value="0.39166666666666666" />
+        <entry key="..\:/Uni Stuff/CsYear2/Group Project/NewCM2305/app/src/main/res/layout/activity_login.xml" value="0.33" />
+        <entry key="..\:/Uni Stuff/CsYear2/Group Project/NewCM2305/app/src/main/res/layout/activity_maps.xml" value="0.33" />
+        <entry key="..\:/Uni Stuff/CsYear2/Group Project/NewCM2305/app/src/main/res/layout/content_add_account.xml" value="0.39166666666666666" />
+        <entry key="..\:/Uni Stuff/CsYear2/Group Project/NewCM2305/app/src/main/res/layout/content_maps.xml" value="0.39166666666666666" />
+        <entry key="..\:/Uni Stuff/CsYear2/Group Project/NewCM2305/app/src/main/res/layout/custom_list_item.xml" value="0.39166666666666666" />
+        <entry key="..\:/Uni Stuff/CsYear2/Group Project/NewCM2305/app/src/main/res/layout/fragment_add_account.xml" value="0.36231884057971014" />
+        <entry key="..\:/Uni Stuff/CsYear2/Group Project/NewCM2305/app/src/main/res/layout/fragment_add_contact.xml" value="0.39166666666666666" />
+        <entry key="..\:/Uni Stuff/CsYear2/Group Project/NewCM2305/app/src/main/res/layout/fragment_add_location.xml" value="0.39166666666666666" />
+        <entry key="..\:/Uni Stuff/CsYear2/Group Project/NewCM2305/app/src/main/res/layout/fragment_first.xml" value="0.39166666666666666" />
+        <entry key="..\:/Uni Stuff/CsYear2/Group Project/NewCM2305/app/src/main/res/layout/fragment_second.xml" value="0.39166666666666666" />
+        <entry key="..\:/Uni Stuff/CsYear2/Group Project/NewCM2305/app/src/main/res/layout/fragment_view_account.xml" value="0.39166666666666666" />
+        <entry key="..\:/Uni Stuff/CsYear2/Group Project/NewCM2305/app/src/main/res/layout/fragment_view_contact.xml" value="0.39166666666666666" />
+        <entry key="..\:/Uni Stuff/CsYear2/Group Project/NewCM2305/app/src/main/res/layout/fragment_view_location.xml" value="0.39166666666666666" />
+        <entry key="..\:/Uni Stuff/CsYear2/Group Project/NewCM2305/app/src/main/res/layout/simple_list_item_1.xml" value="0.39166666666666666" />
+        <entry key="..\:/Uni Stuff/CsYear2/Group Project/NewCM2305/app/src/main/res/layout/trusted_disp.xml" value="0.39166666666666666" />
+        <entry key="..\:/Uni Stuff/CsYear2/Group Project/NewCM2305/app/src/main/res/menu/nav_menu.xml" value="0.33177083333333335" />
         <entry key="..\:/Users/sill/StudioProjects/CM2305/app/src/main/res/layout/activity_maps.xml" value="0.3109375" />
-        <entry key="..\:/Users/sill/StudioProjects/CM2305/app/src/main/res/layout/custom_list_item.xml" value="0.24155622060709706" />
-        <entry key="..\:/Users/sill/StudioProjects/CM2305/app/src/main/res/layout/fragment_add_contact.xml" value="0.3302083333333333" />
-        <entry key="..\:/Users/sill/StudioProjects/CM2305/app/src/main/res/layout/fragment_add_location.xml" value="0.3302083333333333" />
-        <entry key="..\:/Users/sill/StudioProjects/CM2305/app/src/main/res/layout/fragment_view_account.xml" value="0.3302083333333333" />
-        <entry key="..\:/Users/sill/StudioProjects/CM2305/app/src/main/res/layout/fragment_view_contact.xml" value="0.3302083333333333" />
-        <entry key="..\:/Users/sill/StudioProjects/CM2305/app/src/main/res/layout/fragment_view_location.xml" value="0.3302083333333333" />
-        <entry key="..\:/Users/sill/StudioProjects/CM2305/app/src/main/res/layout/simple_list_item_1.xml" value="0.17058572039333048" />
-        <entry key="..\:/Users/sill/StudioProjects/CM2305/app/src/main/res/layout/trusted_disp.xml" value="0.33" />
-        <entry key="..\:/Users/sill/StudioProjects/CM2305/app/src/main/res/menu/danger_menu.xml" value="0.2261650277896537" />
-        <entry key="..\:/Users/sill/StudioProjects/CM2305/app/src/main/res/xml/search.xml" value="0.23386062419837536" />
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_X" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK" />
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_16" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK" />
 </project>
