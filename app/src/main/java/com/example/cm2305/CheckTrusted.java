@@ -5,48 +5,27 @@ package com.example.cm2305;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
+
 import androidx.fragment.app.FragmentActivity;
 
 import android.app.AlertDialog;
-import android.content.Context;
-import android.content.Intent;
-import android.os.Build;
+
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
-import android.os.Looper;
+
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
+
 import android.widget.ListView;
 import android.widget.Toast;
-import android.Manifest;
-import org.json.JSONObject;
-import android.content.pm.PackageManager;
-import android.location.Location;
-import android.widget.TextView;
-import org.json.*;
+
 import org.w3c.dom.Comment;
 
-import android.view.LayoutInflater;
-
-import android.view.ViewGroup;
 
 import android.widget.ArrayAdapter;
 import android.widget.AdapterView;
-import android.view.View;
+
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.HashMap;
-import java.util.Map;
 
-import com.android.volley.toolbox.Volley;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;

@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.Toast;
 import android.Manifest;
 import org.json.JSONObject;
@@ -46,6 +47,8 @@ import com.google.firebase.database.DataSnapshot;
 
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.seismic.ShakeDetector;
 
 
@@ -85,6 +88,12 @@ import java.util.ArrayList;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 
 
 import com.example.cm2305.databinding.ActivityMapsBinding;
@@ -527,12 +536,34 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
         FirebaseDatabase database = FirebaseDatabase.getInstance("https://night-time-security-app-default-rtdb.europe-west1.firebasedatabase.app/");
         DatabaseReference myRef = database.getReference("Journeys");
 
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        CollectionReference users = db.collection("Users").document(GetCurrentUser()).collection("Friends");
+
         FloatingActionButton button =  findViewById(R.id.floatingActionButton2);
         Button button3 = (Button) findViewById(R.id.button3);
         FloatingActionButton FABStart = findViewById(R.id.floatingActionButton2);
         FloatingActionButton FABEnd = findViewById(R.id.floatingActionButton4);
         //TextView textView = (TextView) findViewById(R.id.textView);
         AutoCompleteTextView editTextSearch = findViewById(R.id.actv);
+
+        Spinner dropdown = findViewById(R.id.spinner3);
+        ArrayList<String> itemsList = new ArrayList<String>();
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, itemsList);
+        users.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        itemsList.add(document.getString("Email"));
+                    }
+                    dropdown.setPrompt("Select Trusted Contact");
+                    dropdown.setAdapter(adapter);
+                }
+            }
+        });
+
+
 
         editTextSearch.addTextChangedListener(new TextWatcher() {
             @Override
@@ -607,8 +638,7 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
                                     destM = mMap.addMarker(new MarkerOptions().position(destCords).title("Destination Location"));
                                     drawMarkerWithCircle(destCords);
                                     tasksRef = myRef.push();
-                                    EditText trustedContact = (EditText) findViewById(R.id.trustedContact);
-                                    trustedContactEmail = trustedContact.getText().toString();
+                                    trustedContactEmail = dropdown.getSelectedItem().toString();
                                     Journey journey = new Journey(startCords,destCords,GetCurrentUser(),trustedContactEmail,tasksRef);
                                     journey.add2Fire();
 

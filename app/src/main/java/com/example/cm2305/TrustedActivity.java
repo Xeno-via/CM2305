@@ -1,15 +1,14 @@
 package com.example.cm2305;
 
-import android.app.AppComponentFactory;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentActivity;
 
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -23,8 +22,6 @@ import androidx.recyclerview.widget.RecyclerView.LayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 
-
-import java.util.ArrayList;
 
 public class TrustedActivity extends AppCompatActivity {
     String email;
@@ -50,6 +47,20 @@ public class TrustedActivity extends AppCompatActivity {
             email = user.getEmail();
         }
         setUpRecyclerView();
+
+
+        FloatingActionButton addFriend = findViewById(R.id.button_add_note);
+        addFriend.setOnClickListener( new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                Intent intent = new Intent(getApplicationContext(), FriendRequestActivity.class);
+                startActivity(intent); //change activity
+
+
+            }
+        });
     }
 
     private void setUpRecyclerView() {
@@ -63,6 +74,7 @@ public class TrustedActivity extends AppCompatActivity {
 
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setHasFixedSize(true);
+        recyclerView.setItemAnimator(null);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
     }
