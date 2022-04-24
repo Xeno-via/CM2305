@@ -64,6 +64,12 @@
             android:exported="true"
             android:label="CheckTrusted">
         </activity>
+
+        <activity
+            android:name=".TrustedActivity"
+            android:exported="true"
+            android:label="TrustedActivity">
+        </activity>
         <activity
             android:name=".DatabaseActivity"
             android:exported="true"

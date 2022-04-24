@@ -2,7 +2,6 @@ package com.example.cm2305;
 
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.FragmentActivity;
-
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,6 +16,7 @@ import android.os.Looper;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 import android.Manifest;
@@ -26,16 +26,15 @@ import android.location.Location;
 import android.widget.TextView;
 import org.json.*;
 
-
 import java.util.concurrent.TimeUnit;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import androidx.annotation.NonNull;
+
 import androidx.core.app.ActivityCompat;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-
-
 import android.hardware.SensorManager;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -44,6 +43,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
+
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.seismic.ShakeDetector;
@@ -63,6 +63,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
@@ -73,9 +74,11 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.CancellationTokenSource;
+
 import com.google.android.gms.tasks.OnSuccessListener;
 import java.util.ArrayList;
 
@@ -88,9 +91,11 @@ import com.example.cm2305.databinding.ActivityMapsBinding;
 import com.google.maps.android.PolyUtil;
 import com.what3words.androidwrapper.What3WordsV3;
 import com.what3words.javawrapper.request.Coordinates;
+import com.what3words.javawrapper.response.ConvertTo3WA;
 
 
-import java.util.Locale;
+
+
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers;
 import io.reactivex.rxjava3.core.Observable;
@@ -119,6 +124,8 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
     private AlertDialog dialog;
     double latitude;
     double longitude;
+    private String trustedContactEmail;
+
 
 
     @Override public void hearShake() {
@@ -154,23 +161,6 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
 
         tinydb = new TinyDB(this);
 
-
-
-        //get the input like for a normal EditText
-        //String input = editTextSearch.getText().toString();
-
-
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
-
-            String name = user.getDisplayName();
-            String email = user.getEmail();
-            Log.d("ADebugTag", "Value: " + email);
-
-
-        } else {
-            Log.d("ADebugTag", "Value: " + '8');
-        }
 
         locationRequest.setInterval(5000);
         locationRequest.setFastestInterval(5000);
@@ -336,7 +326,11 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
                 mCircle.remove();
                 destM.remove();
                 String journeyStatus = "Finished";
+                //TODO - ALERT Builder
                 tasksRef.child("journeyStatus").setValue(journeyStatus);
+
+                String id_Journey = trustedContactEmail + journeyStatus;
+                tasksRef.child("ID_journeyStatus").setValue(id_Journey);
 
             }
 
@@ -443,6 +437,8 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
                                             String journeyStatus = "Cancelled";
                                             //Log.d("ADebugTag", "Value: " + journeyStatus);
                                             tasksRef.child("journeyStatus").setValue(journeyStatus);
+                                            String id_Journey = trustedContactEmail + journeyStatus;
+                                            tasksRef.child("ID_journeyStatus").setValue(id_Journey);
 
                                         }
 
@@ -611,7 +607,9 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
                                     destM = mMap.addMarker(new MarkerOptions().position(destCords).title("Destination Location"));
                                     drawMarkerWithCircle(destCords);
                                     tasksRef = myRef.push();
-                                    Journey journey = new Journey(startCords,destCords,GetCurrentUser(),"TrustedTest",tasksRef);
+                                    EditText trustedContact = (EditText) findViewById(R.id.trustedContact);
+                                    trustedContactEmail = trustedContact.getText().toString();
+                                    Journey journey = new Journey(startCords,destCords,GetCurrentUser(),trustedContactEmail,tasksRef);
                                     journey.add2Fire();
 
                                 } catch (JSONException e) {
@@ -656,6 +654,8 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
             mCircle.remove();
             destM.remove();
             String journeyStatus = "Finished";
+            String id_Journey = trustedContactEmail + journeyStatus;
+            tasksRef.child("ID_journeyStatus").setValue(id_Journey);
             tasksRef.child("journeyStatus").setValue(journeyStatus);
             dialog = null;
             polyline = null;
@@ -665,7 +665,7 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
             });
 
         button3.setOnClickListener(new View.OnClickListener() {public void onClick(View v) {
-            Intent intent = new Intent(getApplicationContext(), CheckTrusted.class);
+            Intent intent = new Intent(getApplicationContext(), TrustedActivity.class);
             startActivity(intent); //change activity
 
         }
@@ -763,8 +763,9 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
         public String dangerLevel;
         public String journeyStatus;
         public String ETA;
+        public String ID_js;
         public DatabaseReference tasksRef;
-        public int journeyID;
+
 
 
         public Journey(LatLng start, LatLng dest, String user, String trusted, DatabaseReference ref){
@@ -777,6 +778,7 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
             dangerLevel = "Safe";
             ETA = "Dummy Data";
             tasksRef = ref;
+            ID_js = trusted + journeyStatus;
 
 
 
@@ -791,6 +793,7 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
             journey.put("CurrentCords", String.valueOf(currCords));
             journey.put("DangerLevel", dangerLevel);
             journey.put("journeyStatus", journeyStatus);
+            journey.put("ID_journeyStatus", ID_js);
             journey.put("ETA", ETA);
 
 

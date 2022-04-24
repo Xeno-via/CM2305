@@ -48,6 +48,8 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -60,7 +62,7 @@ public class CheckTrusted extends FragmentActivity {
 
     private ListView dataListView;
 
-
+    private String email;
 
     ArrayList arrayList;
 
@@ -79,20 +81,24 @@ public class CheckTrusted extends FragmentActivity {
         FirebaseDatabase database = FirebaseDatabase.getInstance("https://night-time-security-app-default-rtdb.europe-west1.firebasedatabase.app/");
         DatabaseReference myRef = database.getReference().child("Journeys");
 
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user != null) {
+            String name = user.getDisplayName();
+            email = user.getEmail(); }
+
+
         ArrayAdapter<String> itemsAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, arrayList);
         dataListView = findViewById(android.R.id.list);
         dataListView.setAdapter(itemsAdapter);
-        String Curr_UN = "TrustedTest";
-        Query progress_User1 = myRef.orderByChild("TrustedName").equalTo(Curr_UN);
-        Query progress_User = myRef.orderByChild("journeyStatus").equalTo("In Progress");
 
 
-
+        Query progress_User = myRef.orderByChild("ID_journeyStatus").equalTo(email+"In Progress");
 
 
         ChildEventListener childEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String previousChildName) {
+
                 //String string = dataSnapshot.getValue(String.class);
                 final String CurrentCords = dataSnapshot.child("CurrentCords").getValue().toString();
                 final String Name = dataSnapshot.child("Name").getValue().toString();
@@ -102,6 +108,9 @@ public class CheckTrusted extends FragmentActivity {
 
                 arrayList.add(Name);
                 itemsAdapter.notifyDataSetChanged();
+
+
+
 
                 dataListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
                 {
@@ -138,6 +147,7 @@ public class CheckTrusted extends FragmentActivity {
 
                 arrayList.add(Name);
                 itemsAdapter.notifyDataSetChanged();
+
 
                 dataListView.setOnItemClickListener(new AdapterView.OnItemClickListener()
                 {
