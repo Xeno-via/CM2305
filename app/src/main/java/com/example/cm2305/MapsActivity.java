@@ -139,7 +139,8 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
     private String trustedContactEmail;
     public String what3wordsReturn;
 
-    private Button showSettingsBtn, revertDefaultBtn, saveSettingsBtn;
+    private Button revertDefaultBtn, saveSettingsBtn;
+    private FloatingActionButton showSettingsBtn;
 
     private AlertDialog.Builder dialogBuilder;
     private AlertDialog popupDialog;
