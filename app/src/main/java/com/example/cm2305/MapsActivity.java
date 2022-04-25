@@ -14,10 +14,13 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.os.Looper;
 import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.Spinner;
 import android.widget.Toast;
 import android.Manifest;
@@ -136,6 +139,10 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
     private String trustedContactEmail;
     public String what3wordsReturn;
 
+    private Button showSettingsBtn, revertDefaultBtn, saveSettingsBtn;
+
+    private AlertDialog.Builder dialogBuilder;
+    private AlertDialog popupDialog;
 
 
     @Override public void hearShake() {
@@ -143,8 +150,6 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
             getDangerLevel();
         }
     }
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -212,7 +217,18 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
             return true;
         });
 
+        revertDefaultBtn = findViewById(R.id.revertToDefaultButton);
+        saveSettingsBtn = findViewById(R.id.saveSettingsButton);
+        showSettingsBtn = findViewById(R.id.showSettingsButton);
+        showSettingsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editSettingsDialog();
+            }
+        });
+
     }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -918,7 +934,34 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
         }
     }
 
+    public void editSettingsDialog(){
+        dialogBuilder = new AlertDialog.Builder(this);
+        final View settingsPopupView = getLayoutInflater().inflate(R.layout.popup_settings, null);
 
+        dialogBuilder.setView(settingsPopupView);
+        popupDialog = dialogBuilder.create();
+        popupDialog.show();
+
+        revertDefaultBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Delete entry to revert to default settings
+
+                popupDialog.dismiss();
+            }
+        });
+
+        saveSettingsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Save settings as entry
+
+                popupDialog.dismiss();
+            }
+        });
+
+
+    }
 
 
 

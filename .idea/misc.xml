@@ -3,6 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/matth/OneDrive/Documents/Coding/AndroidStudio/Projects/CM2305/app/src/main/res/layout/activity_maps.xml" value="0.358695652173913" />
+        <entry key="..\:/Users/matth/OneDrive/Documents/Coding/AndroidStudio/Projects/CM2305/app/src/main/res/layout/fragment_add_account.xml" value="0.18802083333333333" />
+        <entry key="..\:/Users/matth/OneDrive/Documents/Coding/AndroidStudio/Projects/CM2305/app/src/main/res/layout/friend_item.xml" value="0.358695652173913" />
+        <entry key="..\:/Users/matth/OneDrive/Documents/Coding/AndroidStudio/Projects/CM2305/app/src/main/res/layout/friend_layout.xml" value="0.358695652173913" />
+        <entry key="..\:/Users/matth/OneDrive/Documents/Coding/AndroidStudio/Projects/CM2305/app/src/main/res/layout/popup_settings.xml" value="0.2" />
         <entry key="..\:/Users/sill/StudioProjects/CM2305/app/src/main/res/drawable/ic_baseline_close_24.xml" value="0.34" />
         <entry key="..\:/Users/sill/StudioProjects/CM2305/app/src/main/res/layout/activity_database.xml" value="0.21419410004275333" />
         <entry key="..\:/Users/sill/StudioProjects/CM2305/app/src/main/res/layout/activity_firebase_ui.xml" value="0.182129115006413" />
