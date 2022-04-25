@@ -2,7 +2,6 @@ package com.example.cm2305;
 
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.FragmentActivity;
-
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,7 +16,6 @@ import android.os.Looper;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -28,7 +26,6 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.widget.TextView;
 import org.json.*;
-import org.w3c.dom.Text;
 
 import java.util.concurrent.TimeUnit;
 import java.util.HashMap;
@@ -115,7 +112,6 @@ import io.reactivex.rxjava3.schedulers.Schedulers;
 
 public class  MapsActivity extends FragmentActivity implements OnMapReadyCallback, ShakeDetector.Listener {
 
-    public String What3WordsReturn;
     private GoogleMap mMap;
     private ActivityMapsBinding binding;
 
@@ -138,6 +134,8 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
     double latitude;
     double longitude;
     private String trustedContactEmail;
+    public String what3wordsReturn;
+
 
 
     @Override public void hearShake() {
@@ -162,9 +160,6 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
 
         sd.start(sensorManager, sensorDelay);
 
-        ImageView What3WordsImage = (ImageView) findViewById(R.id.imageView);
-        int imageResourse = getResources().getIdentifier("@drawable/what3words.png", null, this.getPackageName());
-        What3WordsImage.setImageResource(imageResourse);
         //setContentView(R.layout.activity_maps);
         //mTextViewResult = findViewById(R.id.textView);
         mQueue = Volley.newRequestQueue(this);
@@ -176,43 +171,8 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
         //What3Words(51.2423, -0.12423);
 
 
-
         tinydb = new TinyDB(this);
 
-        //get the input like for a normal EditText
-        //String input = editTextSearch.getText().toString();
-
-        binding.bottomNavigationView.setOnItemSelectedListener(item -> {
-
-            switch (item.getItemId()){
-
-                case R.id.home:
-                    //Intent home = new Intent(getApplicationContext(), MapsActivity.class);
-                    //startActivity(home); //change activity
-
-                case R.id.friends:
-                    Intent friends = new Intent(getApplicationContext(), CheckTrusted.class);
-                    startActivity(friends); //change activity
-
-                case R.id.settings:
-                    //Intent settings = new Intent(getApplicationContext(), CheckTrusted.class);
-                    // startActivity(settings); //change activity
-            }
-
-            return true;
-        });
-
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if (user != null) {
-
-            String name = user.getDisplayName();
-            String email = user.getEmail();
-            Log.d("ADebugTag", "Value: " + email);
-
-
-        } else {
-            Log.d("ADebugTag", "Value: " + '8');
-        }
 
         locationRequest.setInterval(5000);
         locationRequest.setFastestInterval(5000);
@@ -231,6 +191,26 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
                 }
             }
         };
+
+        binding.bottomNavigationView.setOnItemSelectedListener(item -> {
+
+            switch (item.getItemId()){
+
+                case R.id.home:
+                    //Intent home = new Intent(getApplicationContext(), MapsActivity.class);
+                    //startActivity(home); //change activity
+
+                case R.id.friends:
+                    Intent friends = new Intent(getApplicationContext(), TrustedActivity.class);
+                    startActivity(friends); //change activity
+
+                case R.id.settings:
+                    //Intent settings = new Intent(getApplicationContext(), CheckTrusted.class);
+                    // startActivity(settings); //change activity
+            }
+
+            return true;
+        });
 
     }
 
@@ -317,8 +297,9 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
         latitude = location.getLatitude();
         longitude = location.getLongitude();
         What3Words(latitude,longitude);
-        TextView what3wordstext = findViewById(R.id.what3WordsText);
-        what3wordstext.setText(What3WordsReturn);
+        TextView what3wordsText = findViewById(R.id.what3WordsText);
+        what3wordsText.setText(what3wordsReturn);
+
         LatLng coords = new LatLng(latitude, longitude);
         String LatLong = (latitude+""+","+longitude+"");
 
@@ -523,7 +504,7 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
         tinydb.putListString("yourkey",list);
         AutoCompleteTextView editTextSearch = findViewById(R.id.actv);
         Button buttonClear = (Button) findViewById(R.id.buttonClear);
-        //buttonClear.setVisibility(View.VISIBLE);
+        buttonClear.setVisibility(View.VISIBLE);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(),
                 R.layout.custom_list_item, R.id.text_view_list_item, list);
         editTextSearch.setAdapter(adapter);
@@ -586,6 +567,7 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
         CollectionReference users = db.collection("Users").document(GetCurrentUser()).collection("Friends");
 
         FloatingActionButton button =  findViewById(R.id.floatingActionButton2);
+        //Button button3 = (Button) findViewById(R.id.button3);
         FloatingActionButton FABStart = findViewById(R.id.floatingActionButton2);
         FloatingActionButton FABEnd = findViewById(R.id.floatingActionButton4);
         //TextView textView = (TextView) findViewById(R.id.textView);
@@ -738,6 +720,12 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
 
             });
 
+       /* button3.setOnClickListener(new View.OnClickListener() {public void onClick(View v) {
+            Intent intent = new Intent(getApplicationContext(), TrustedActivity.class);
+            startActivity(intent); //change activity
+
+        }
+        });*/
 
     }
     public void addToSuggested(String editTextValue2){
@@ -799,7 +787,7 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
 
     }
 
-    public void What3Words(Double Lat, Double Long){
+    public void What3Words(Double Lat,Double Long){
         What3WordsV3 wrapper = new What3WordsV3("ZQ0XPH3L", this);
         Observable.fromCallable(() -> wrapper.convertTo3wa(new Coordinates(Lat, Long)).execute())
                 .subscribeOn(Schedulers.io())
@@ -807,7 +795,7 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
                 .subscribe(result -> {
                     if (result.isSuccessful()) {
                         Log.i("MainActivity", String.format("3 word address: %s", result.getWords()));
-                        What3WordsReturn = result.getWords();
+                        what3wordsReturn = result.getWords();
 
                     } else {
                         Log.i("MainActivity", result.getError().getMessage());
