@@ -134,6 +134,7 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
     double latitude;
     double longitude;
     private String trustedContactEmail;
+    public String what3wordsReturn;
 
 
 
@@ -148,6 +149,8 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        binding = ActivityMapsBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         SensorManager sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         ShakeDetector sd = new ShakeDetector(this);
@@ -157,7 +160,7 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
 
         sd.start(sensorManager, sensorDelay);
 
-        setContentView(R.layout.activity_maps);
+        //setContentView(R.layout.activity_maps);
         //mTextViewResult = findViewById(R.id.textView);
         mQueue = Volley.newRequestQueue(this);
 
@@ -165,7 +168,7 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        What3Words(51.2423, -0.12423);
+        //What3Words(51.2423, -0.12423);
 
 
         tinydb = new TinyDB(this);
@@ -188,6 +191,26 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
                 }
             }
         };
+
+        binding.bottomNavigationView.setOnItemSelectedListener(item -> {
+
+            switch (item.getItemId()){
+
+                case R.id.home:
+                    //Intent home = new Intent(getApplicationContext(), MapsActivity.class);
+                    //startActivity(home); //change activity
+
+                case R.id.friends:
+                    Intent friends = new Intent(getApplicationContext(), TrustedActivity.class);
+                    startActivity(friends); //change activity
+
+                case R.id.settings:
+                    //Intent settings = new Intent(getApplicationContext(), CheckTrusted.class);
+                    // startActivity(settings); //change activity
+            }
+
+            return true;
+        });
 
     }
 
@@ -273,6 +296,9 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
     private void updateVals (Location location) {
         latitude = location.getLatitude();
         longitude = location.getLongitude();
+        What3Words(latitude,longitude);
+        TextView what3wordsText = findViewById(R.id.what3WordsText);
+        what3wordsText.setText(what3wordsReturn);
 
         LatLng coords = new LatLng(latitude, longitude);
         String LatLong = (latitude+""+","+longitude+"");
@@ -541,7 +567,7 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
         CollectionReference users = db.collection("Users").document(GetCurrentUser()).collection("Friends");
 
         FloatingActionButton button =  findViewById(R.id.floatingActionButton2);
-        Button button3 = (Button) findViewById(R.id.button3);
+        //Button button3 = (Button) findViewById(R.id.button3);
         FloatingActionButton FABStart = findViewById(R.id.floatingActionButton2);
         FloatingActionButton FABEnd = findViewById(R.id.floatingActionButton4);
         //TextView textView = (TextView) findViewById(R.id.textView);
@@ -694,12 +720,12 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
 
             });
 
-        button3.setOnClickListener(new View.OnClickListener() {public void onClick(View v) {
+       /* button3.setOnClickListener(new View.OnClickListener() {public void onClick(View v) {
             Intent intent = new Intent(getApplicationContext(), TrustedActivity.class);
             startActivity(intent); //change activity
 
         }
-        });
+        });*/
 
     }
     public void addToSuggested(String editTextValue2){
@@ -769,6 +795,7 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
                 .subscribe(result -> {
                     if (result.isSuccessful()) {
                         Log.i("MainActivity", String.format("3 word address: %s", result.getWords()));
+                        what3wordsReturn = result.getWords();
 
                     } else {
                         Log.i("MainActivity", result.getError().getMessage());
