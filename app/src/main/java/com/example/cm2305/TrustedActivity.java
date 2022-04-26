@@ -61,6 +61,19 @@ public class TrustedActivity extends AppCompatActivity {
 
             }
         });
+
+        FloatingActionButton seeFriends = findViewById(R.id.button_see_Friends);
+        seeFriends.setOnClickListener( new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                Intent intent = new Intent(getApplicationContext(), FriendsListActivity.class);
+                startActivity(intent); //change activity
+
+
+            }
+        });
     }
 
     private void setUpRecyclerView() {

@@ -140,6 +140,7 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
     double longitude;
     private String trustedContactEmail;
     public String what3wordsReturn;
+    private Spinner dropdown;
 
     private AlertDialog.Builder dialogBuilder;
     private AlertDialog popupDialog;
@@ -558,6 +559,28 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
         }
     }
 
+    @Override
+    public void onResume(){
+        super.onResume();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        CollectionReference users = db.collection("Users").document(GetCurrentUser()).collection("Friends");
+        dropdown = findViewById(R.id.spinner3);
+        ArrayList<String> itemsList = new ArrayList<String>();
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, itemsList);
+        users.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        itemsList.add(document.getString("Email"));
+                    }
+                    dropdown.setPrompt("Select Trusted Contact");
+                    dropdown.setAdapter(adapter);
+                }
+            }
+        });
+
+    }
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -577,8 +600,7 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
         DatabaseReference myRef = database.getReference("Journeys");
 
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        CollectionReference users = db.collection("Users").document(GetCurrentUser()).collection("Friends");
+
 
         FloatingActionButton button =  findViewById(R.id.floatingActionButton2);
         //Button button3 = (Button) findViewById(R.id.button3);
@@ -587,21 +609,7 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
         //TextView textView = (TextView) findViewById(R.id.textView);
         AutoCompleteTextView editTextSearch = findViewById(R.id.actv);
 
-        Spinner dropdown = findViewById(R.id.spinner3);
-        ArrayList<String> itemsList = new ArrayList<String>();
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, itemsList);
-        users.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        itemsList.add(document.getString("Email"));
-                    }
-                    dropdown.setPrompt("Select Trusted Contact");
-                    dropdown.setAdapter(adapter);
-                }
-            }
-        });
+
 
 
 

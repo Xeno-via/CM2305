@@ -72,6 +72,12 @@
         </activity>
 
         <activity
+            android:name=".FriendsListActivity"
+            android:exported="true"
+            android:label="FriendsListActivity">
+        </activity>
+
+        <activity
             android:name=".TrustedActivity"
             android:exported="true"
             android:label="TrustedActivity">
