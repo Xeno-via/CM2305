@@ -150,14 +150,30 @@
             tools:visibility="visible" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/showSettingsButton"
+            android:id="@+id/DangerButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="76dp"
-            android:src="@drawable/ic_baseline_build_24"
+            android:src="@android:drawable/ic_dialog_alert"
+            android:visibility="invisible"
+            app:backgroundTint="@color/red"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/floatingActionButton4" />
+            app:layout_constraintEnd_toStartOf="@+id/floatingActionButton4"
+            tools:ignore="SpeakableTextPresentCheck" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/SafeButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="76dp"
+            android:src="@drawable/ic_safe_zone_svgrepo_com"
+            android:visibility="invisible"
+            app:backgroundTint="@color/teal_700"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/floatingActionButton4"
+            tools:ignore="SpeakableTextPresentCheck" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

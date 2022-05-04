@@ -200,29 +200,43 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
 
         binding.bottomNavigationView.setOnItemSelectedListener(item -> {
 
-            switch (item.getItemId()){
+            switch ((item.getTitle().toString())){
 
-                case R.id.home:
+                case "Home":
                     //Intent home = new Intent(getApplicationContext(), MapsActivity.class);
                     //startActivity(home); //change activity
+                    break;
 
-                case R.id.friends:
+                case "Friends":
                     Intent friends = new Intent(getApplicationContext(), TrustedActivity.class);
                     startActivity(friends); //change activity
+                    break;
 
-                case R.id.settings:
-                    //Intent settings = new Intent(getApplicationContext(), CheckTrusted.class);
-                    // startActivity(settings); //change activity
+                case "Settings":
+                    editSettingsDialog();
+                    break;
             }
 
             return true;
         });
 
-        FloatingActionButton showSettingsBtn = findViewById(R.id.showSettingsButton);
-        showSettingsBtn.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton DangerButton = findViewById(R.id.DangerButton);
+        FloatingActionButton SafeButton = findViewById(R.id.SafeButton);
+        DangerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                editSettingsDialog();
+                DangerButton.setVisibility(View.INVISIBLE);
+                SafeButton.setVisibility(View.VISIBLE);
+                //editSettingsDialog();
+            }
+        });
+
+        SafeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SafeButton.setVisibility(View.INVISIBLE);
+                DangerButton.setVisibility(View.VISIBLE);
+                //editSettingsDialog();
             }
         });
 
@@ -629,6 +643,7 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
             }});
 
 
+        FloatingActionButton DangerButton = findViewById(R.id.DangerButton);
         FABStart.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.O)
             public void onClick(View v) {
@@ -638,6 +653,8 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
                 FABEnd.setVisibility(View.VISIBLE);
                 StartLocationUpdates();
                 button.setVisibility(View.INVISIBLE);
+                DangerButton.setVisibility(View.VISIBLE);
+
                 String LatLong = (latitude+""+","+longitude+"");
                 String editTextValue = LatLong;
                 String editTextValue2 = editTextSearch.getText().toString();
@@ -721,6 +738,7 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
             }
         });
 
+        FloatingActionButton SafeButton = findViewById(R.id.SafeButton);
         FABEnd.setOnClickListener(new View.OnClickListener() {public void onClick(View v) {
 
             Toast toast = Toast.makeText(getApplicationContext(), "Journey Ended", Toast.LENGTH_SHORT);
@@ -728,6 +746,8 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
             StopLocationUpdates();
             FABEnd.setVisibility(View.INVISIBLE);
             FABStart.setVisibility(View.VISIBLE);
+            DangerButton.setVisibility(View.INVISIBLE);
+            SafeButton.setVisibility(View.INVISIBLE);
             polyline.remove();
             mCircle.remove();
             destM.remove();
