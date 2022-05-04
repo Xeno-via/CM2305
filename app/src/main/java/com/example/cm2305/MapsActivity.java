@@ -14,10 +14,13 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.os.Looper;
 import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.Spinner;
 import android.widget.Toast;
 import android.Manifest;
@@ -27,6 +30,7 @@ import android.location.Location;
 import android.widget.TextView;
 import org.json.*;
 
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.HashMap;
 import java.util.List;
@@ -47,6 +51,7 @@ import com.google.firebase.database.DataSnapshot;
 
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.seismic.ShakeDetector;
@@ -135,7 +140,10 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
     double longitude;
     private String trustedContactEmail;
     public String what3wordsReturn;
+    private Spinner dropdown;
 
+    private AlertDialog.Builder dialogBuilder;
+    private AlertDialog popupDialog;
 
 
     @Override public void hearShake() {
@@ -143,8 +151,6 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
             getDangerLevel();
         }
     }
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -212,7 +218,16 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
             return true;
         });
 
+        FloatingActionButton showSettingsBtn = findViewById(R.id.showSettingsButton);
+        showSettingsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editSettingsDialog();
+            }
+        });
+
     }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -544,6 +559,28 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
         }
     }
 
+    @Override
+    public void onResume(){
+        super.onResume();
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        CollectionReference users = db.collection("Users").document(GetCurrentUser()).collection("Friends");
+        dropdown = findViewById(R.id.spinner3);
+        ArrayList<String> itemsList = new ArrayList<String>();
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, itemsList);
+        users.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        itemsList.add(document.getString("Email"));
+                    }
+                    dropdown.setPrompt("Select Trusted Contact");
+                    dropdown.setAdapter(adapter);
+                }
+            }
+        });
+
+    }
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -563,8 +600,7 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
         DatabaseReference myRef = database.getReference("Journeys");
 
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        CollectionReference users = db.collection("Users").document(GetCurrentUser()).collection("Friends");
+
 
         FloatingActionButton button =  findViewById(R.id.floatingActionButton2);
         //Button button3 = (Button) findViewById(R.id.button3);
@@ -573,21 +609,7 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
         //TextView textView = (TextView) findViewById(R.id.textView);
         AutoCompleteTextView editTextSearch = findViewById(R.id.actv);
 
-        Spinner dropdown = findViewById(R.id.spinner3);
-        ArrayList<String> itemsList = new ArrayList<String>();
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, itemsList);
-        users.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        itemsList.add(document.getString("Email"));
-                    }
-                    dropdown.setPrompt("Select Trusted Contact");
-                    dropdown.setAdapter(adapter);
-                }
-            }
-        });
+
 
 
 
@@ -918,6 +940,84 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
         }
     }
 
+    public void editSettingsDialog(){
+        // DEFAULT SETTINGS
+        float defaultStrayingDistance = 50f;
+        float defaultTimeAllowance = 10f;
+
+        // Build Dialog
+        dialogBuilder = new AlertDialog.Builder(this);
+        final View settingsPopupView = getLayoutInflater().inflate(R.layout.popup_settings, null);
+
+        dialogBuilder.setView(settingsPopupView);
+        popupDialog = dialogBuilder.create();
+        popupDialog.show();
+
+        // Initialise buttons and fields on popup
+        Button revertDefaultBtn = (Button)settingsPopupView.findViewById(R.id.revertToDefaultButton);
+        Button saveSettingsBtn = (Button)settingsPopupView.findViewById(R.id.saveSettingsButton);
+        EditText editStrayingDistance = settingsPopupView.findViewById(R.id.editStrayingDistance);
+        EditText editTimeAllowance = settingsPopupView.findViewById(R.id.editTimeAllowance);
+
+        // Check if there are any preset settings
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference userReference = db.collection("Users").document(GetCurrentUser());
+        userReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot userDocument = task.getResult();
+                    if (!userDocument.exists()){
+                        db.collection("Users").document(GetCurrentUser()).set(new HashMap<String, Object>());
+                    }
+                    if (userDocument.getString("strayingDistance") != null) {
+                        // if there is an entry for settings then show them in fields
+                        editStrayingDistance.setText(userDocument.getString("strayingDistance"));
+                        editTimeAllowance.setText(userDocument.getString("timeAllowance"));
+                    }
+                }
+            }
+        });
+
+        revertDefaultBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Delete entry to revert to default settings
+                Map<String,Object> updates = new HashMap<>();
+                updates.put("strayingDistance", FieldValue.delete());
+                updates.put("timeAllowance", FieldValue.delete());
+
+                userReference.update(updates).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Log.d("SETTINGS REVERT", "Settings have been deleted from database");
+                    }
+                });
+
+                popupDialog.dismiss();
+            }
+        });
+
+        saveSettingsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Save settings as entry
+                Map<String, Object> updates = new HashMap<>();
+                updates.put("strayingDistance", editStrayingDistance.getText().toString());
+                updates.put("timeAllowance", editTimeAllowance.getText().toString());
+
+                userReference.update(updates).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Log.d("SETTINGS SET", "Settings have been altered to database.");
+                    }
+                });
+
+
+                popupDialog.dismiss();
+            }
+        });
+    }
 
 
 
