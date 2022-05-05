@@ -26,15 +26,27 @@
             android:text="Name"
             android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
+
         <TextView
             android:id="@+id/text_view_CurrentCoords"
             android:layout_width="326dp"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginTop="123dp"
-            android:layout_marginEnd="22dp"
+            android:layout_marginTop="164dp"
+            android:layout_marginEnd="60dp"
             android:text="Current Position"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+
+        <TextView
+            android:id="@+id/text_view_What3Words"
+            android:layout_width="326dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="117dp"
+            android:layout_marginEnd="54dp"
+            android:text="What3Words"
             android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
         <TextView
@@ -43,8 +55,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/text_view_Name"
             android:layout_alignParentStart="true"
-            android:layout_marginStart="21dp"
-            android:layout_marginTop="29dp"
+            android:layout_marginStart="18dp"
+            android:layout_marginTop="23dp"
             android:text="JourneyStatus" />
 
         <TextView

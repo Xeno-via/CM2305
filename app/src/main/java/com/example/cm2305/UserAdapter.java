@@ -53,6 +53,7 @@ public class UserAdapter extends FirebaseRecyclerAdapter<User, UserAdapter.UserH
         holder.textViewCurrentCoords.setText(model.getCurrentCords());
         holder.textViewDangerLevel.setText(String.valueOf(model.getDangerLevel()));
         holder.textViewJourneyStatus.setText(String.valueOf(model.getJourneyStatus()));
+        holder.textViewWhat3Words.setText(String.valueOf(model.getWhat3Words()));
 
 
     }
@@ -73,6 +74,7 @@ public class UserAdapter extends FirebaseRecyclerAdapter<User, UserAdapter.UserH
         TextView textViewCurrentCoords;
         TextView textViewDangerLevel;
         TextView textViewJourneyStatus;
+        TextView textViewWhat3Words;
 
         public UserHolder(View itemView) {
             super(itemView);
@@ -80,6 +82,7 @@ public class UserAdapter extends FirebaseRecyclerAdapter<User, UserAdapter.UserH
             textViewCurrentCoords = itemView.findViewById(R.id.text_view_CurrentCoords);
             textViewDangerLevel = itemView.findViewById(R.id.text_view_DangerLevel);
             textViewJourneyStatus = itemView.findViewById(R.id.text_view_journeyStatus);
+            textViewWhat3Words= itemView.findViewById(R.id.text_view_What3Words);
         }
     }
 
