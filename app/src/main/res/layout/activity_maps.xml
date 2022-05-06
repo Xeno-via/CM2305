@@ -134,7 +134,9 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.891"
-            app:srcCompat="@drawable/what3words" />
+            app:srcCompat="@drawable/what3words"
+            android:src="@drawable/what3words"
+            tools:ignore="ContentDescription" />
 
         <Spinner
             android:id="@+id/spinner3"

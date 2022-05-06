@@ -650,7 +650,8 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
          FABEnd = findViewById(R.id.floatingActionButton4);
         //TextView textView = (TextView) findViewById(R.id.textView);
         AutoCompleteTextView editTextSearch = findViewById(R.id.actv);
-
+        TextView What3WordsText = findViewById(R.id.what3WordsText);
+        //What3Words();
 
 
 
