@@ -30,6 +30,7 @@ import android.location.Location;
 import android.widget.TextView;
 import org.json.*;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.HashMap;
@@ -149,6 +150,8 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
     private AlertDialog.Builder dialogBuilder;
     private AlertDialog popupDialog;
 
+    private int etaHour;
+    private int etaMin;
 
     @Override public void hearShake() {
         if (polyline != null) {
@@ -388,6 +391,12 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
                 getDangerLevel();
             }
 
+            // if current time exceeds eta alerts are sent
+            int currentHour = LocalDateTime.now().getHour();
+            int currentMin = LocalDateTime.now().getMinute();
+            if (currentHour >= etaHour && currentMin >= etaMin) {
+                buildDialog();
+            }
 
             if( results[0] > mCircle.getRadius()  ){
                 Toast.makeText(getBaseContext(), "Outside, distance from center: " + results[0] + " radius: " + mCircle.getRadius(), Toast.LENGTH_LONG).show();
@@ -718,11 +727,37 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
                                     //textView.setText("Response: " + response.toString());
                                     String encoded_Route = obj.getJSONArray("routes").getJSONObject(0).getJSONObject("overview_polyline").getString("points");
 
+                                    // gets duration in seconds from json array
                                     Integer duration = obj.getJSONArray("routes").getJSONObject(0).getJSONArray("legs").getJSONObject(0).getJSONObject("duration").getInt("value");
-                                    //JSONObject routeObject = obj.getJSONObject("route"); // pull out the "route" object
-                                    //JSONObject durationObject = routeObject.getJSONObject("duration"); // pull out the "duration" object
-                                    //String duration = durationObject.getString("text"); //this should be the duration text value (20 hours 40 mins)
+
                                     Log.d("ADebugTag", "Value: " + duration);
+
+                                    // converts duration to hours and minutes
+                                    int minutes = (duration/60)%60;
+                                    int hours = (duration/60)/60;
+
+                                    // gets current hour and minute
+                                    int currentMin = LocalDateTime.now().getMinute();
+                                    int currentHour = LocalDateTime.now().getHour();
+
+                                    // adds hours and minutes of journey duration to current time to get ETA
+                                    if (minutes + currentMin > 59) {
+                                        etaMin = (minutes+currentMin)-60;
+                                        hours = hours+1;
+                                    } else {
+                                        etaMin = minutes+currentMin;
+                                    }
+                                    if (hours + currentHour > 23) {
+                                        etaHour = (hours+currentHour)-24;
+                                    } else {
+                                        etaHour = hours+currentHour;
+                                    }
+                                    // converts eta to string and displays it on UI
+                                    String hour = Integer.toString(etaHour);
+                                    String minute = Integer.toString(etaMin);
+                                    TextView uiETA = findViewById(R.id.uiETA);
+                                    String stringETA = hour + ":" + minute;
+                                    uiETA.setText(stringETA);
 
                                     //textView.setText("Response: " + encoded_Route);
                                     decodedPath = PolyUtil.decode(encoded_Route);
