@@ -30,19 +30,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0"></fragment>
 
-        <Button
-            android:id="@+id/buttonClear"
-            android:layout_width="134dp"
-            android:layout_height="54dp"
-            android:layout_marginTop="132dp"
-            android:text="Clear Search History"
-            android:translationX="30dp"
-            android:translationY="0dp"
-            android:visibility="invisible"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.393"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+
 
         <TextView
             android:id="@+id/text_view_countries"

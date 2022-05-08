@@ -560,23 +560,11 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
     public void getSuggested(ArrayList<String> list) {
         tinydb.putListString("yourkey",list);
         AutoCompleteTextView editTextSearch = findViewById(R.id.actv);
-        Button buttonClear = (Button) findViewById(R.id.buttonClear);
-        buttonClear.setVisibility(View.VISIBLE);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getApplicationContext(),
                 R.layout.custom_list_item, R.id.text_view_list_item, list);
         editTextSearch.setAdapter(adapter);
         editTextSearch.setThreshold(1);
 
-
-
-
-        buttonClear.setOnClickListener(new View.OnClickListener() {
-           @Override
-           public void onClick(View v) {
-               clearSuggested();
-               buttonClear.setVisibility(View.INVISIBLE);
-           }
-        });
 
 
     }
@@ -660,8 +648,7 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
             @Override
             public void afterTextChanged(Editable s) {
                 //editTextSearch.clearFocus();
-                //Button buttonClear = (Button) findViewById(R.id.buttonClear);
-               // buttonClear.setVisibility(View.INVISIBLE);
+
 
             }
 
@@ -699,8 +686,7 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
                 String LatLong = (latitude+""+","+longitude+"");
                 String editTextValue = LatLong;
                 String editTextValue2 = editTextSearch.getText().toString();
-                Button buttonClear = (Button) findViewById(R.id.buttonClear);
-                buttonClear.setVisibility(View.INVISIBLE);
+
 
                 addToSuggested(editTextValue2);
 
@@ -1048,6 +1034,7 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
         Button saveSettingsBtn = (Button)settingsPopupView.findViewById(R.id.saveSettingsButton);
         EditText editStrayingDistance = settingsPopupView.findViewById(R.id.editStrayingDistance);
         EditText editTimeAllowance = settingsPopupView.findViewById(R.id.editTimeAllowance);
+        Button buttonClear = (Button) settingsPopupView.findViewById(R.id.buttonClear);
 
         // Check if there are any preset settings
         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -1066,6 +1053,14 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
                         editTimeAllowance.setText(userDocument.getString("timeAllowance"));
                     }
                 }
+            }
+        });
+
+        buttonClear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clearSuggested();
+                buttonClear.setVisibility(View.INVISIBLE);
             }
         });
 
@@ -1108,9 +1103,10 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
             }
         });
     }
-
-
-
-
 }
+
+
+
+
+
 
