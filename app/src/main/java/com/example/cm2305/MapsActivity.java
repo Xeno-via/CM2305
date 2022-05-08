@@ -30,6 +30,7 @@ import android.location.Location;
 import android.widget.TextView;
 import org.json.*;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.HashMap;
@@ -121,6 +122,7 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
     private ActivityMapsBinding binding;
 
     private static final int PERMISSIONS_FINE_LOCATION = 99;
+    private TextView mTextViewResult;
     private RequestQueue mQueue;
     private Circle mCircle;
     public Marker destM;
@@ -141,14 +143,11 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
     public String what3wordsReturn;
     private Spinner dropdown;
 
-    private FloatingActionButton FABStart;
-    private FloatingActionButton FABEnd;
-    private FloatingActionButton SafeButton;
-    private FloatingActionButton DangerButton;
-
     private AlertDialog.Builder dialogBuilder;
     private AlertDialog popupDialog;
 
+    private int etaHour;
+    private int etaMin;
 
     @Override public void hearShake() {
         if (polyline != null) {
@@ -224,15 +223,13 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
             return true;
         });
 
-         DangerButton = findViewById(R.id.DangerButton);
-         SafeButton = findViewById(R.id.SafeButton);
+        FloatingActionButton DangerButton = findViewById(R.id.DangerButton);
+        FloatingActionButton SafeButton = findViewById(R.id.SafeButton);
         DangerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 DangerButton.setVisibility(View.INVISIBLE);
                 SafeButton.setVisibility(View.VISIBLE);
-                String dangerLevel = "Danger";
-                setDangerLevel(dangerLevel);
                 //editSettingsDialog();
             }
         });
@@ -242,8 +239,6 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
             public void onClick(View v) {
                 SafeButton.setVisibility(View.INVISIBLE);
                 DangerButton.setVisibility(View.VISIBLE);
-                String dangerLevel = "Safe";
-                setDangerLevel(dangerLevel);
                 //editSettingsDialog();
             }
         });
@@ -265,13 +260,14 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
                 }
         }
     }
+    // on back button
     @Override
     public void onBackPressed() {
         //Handle AlertDialog here.
         //Activity must not stop + Application must not close without user confirmation.
         exitByBackKey();
     }
-
+    // on app exit
     @Override
     protected void onDestroy() {
 
@@ -284,7 +280,7 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
 
         }
     }
-
+    // calls updateGPS every 5 secs
     private void StartLocationUpdates(){
         fusedLocationProviderClient.requestLocationUpdates(locationRequest,locationCallBack, Looper.getMainLooper());
         updateGPS();
@@ -294,7 +290,7 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
     private void StopLocationUpdates(){
         fusedLocationProviderClient.removeLocationUpdates(locationCallBack);
     }
-
+    //
     private String GetCurrentUser(){
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         if (user != null) {
@@ -328,9 +324,9 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
             }
         }
     }
-
-
+    // updateVals function updates values on gps updates
     private void updateVals (Location location) {
+        // updates what3words
         latitude = location.getLatitude();
         longitude = location.getLongitude();
         What3Words(latitude,longitude);
@@ -340,32 +336,28 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
         LatLng coords = new LatLng(latitude, longitude);
         String LatLong = (latitude+""+","+longitude+"");
 
-        Log.d("ADebugTag", "Value: " + '1');
+        //Log.d("ADebugTag", "Value: " + '1');
         //TextView textView = (TextView) findViewById(R.id.textView);
 
         if (tasksRef != null)
         {
             tasksRef.child("CurrentCords").setValue(String.valueOf(coords));
-            tasksRef.child("What3Words").setValue(String.valueOf(what3wordsReturn));
-
         }
         else
         {
-           //do nothing
+           int donothing = 1;
         }
 
+        // updates current location marker
         if (currentlocMark != null)
         {
             //currentlocMark = mMap.addMarker(new MarkerOptions().position(coords).title("Current Location").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA)));
             currentlocMark.setPosition(new LatLng(latitude,longitude));
-            //Log.d("ADebugTag", "Value: " + 'P');
-
-
         }
+        // adds current location marker
         else
         {
-            currentlocMark = mMap.addMarker(new MarkerOptions().position(coords).title("Current Location").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_CYAN)));
-            //Log.d("ADebugTag", "Value: " + 'H');
+            currentlocMark = mMap.addMarker(new MarkerOptions().position(coords).title("Current Location").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA)));
         }
 
 
@@ -374,26 +366,42 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
 
 
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(coords, 18));
-        if (MapsActivity.decodedPath == null) {
-            //textView.setText("On Path: " + coords);
+        // if there is a route code below is executed
+        if (MapsActivity.decodedPath != null) {
 
-        } else {
+            // checks if users location is on ployline
             boolean hasDeviated = isPointOnPolyline(coords, new PolylineOptions().addAll(decodedPath), 20);
             //textView.setText("On Path: " + hasDeviated + " " + coords);
             float[] results = new float[2];
             Location.distanceBetween( location.getLatitude(), location.getLongitude(),
                     mCircle.getCenter().latitude, mCircle.getCenter().longitude, results);
-
-            if (!hasDeviated) { //This occurs when user has deviated
+            // getDangerLevel called if user has deviated
+            if (!hasDeviated) {
                 getDangerLevel();
             }
-
+            // if current time exceeds eta alerts are sent
+            int currentHour = LocalDateTime.now().getHour();
+            int currentMin = LocalDateTime.now().getMinute();
+            if (currentHour >= etaHour && currentMin >= etaMin) {
+                buildDialog();
+            }
 
             if( results[0] > mCircle.getRadius()  ){
                 Toast.makeText(getBaseContext(), "Outside, distance from center: " + results[0] + " radius: " + mCircle.getRadius(), Toast.LENGTH_LONG).show();
             } else {
                 Toast.makeText(getBaseContext(), "Inside, distance from center: " + results[0] + " radius: " + mCircle.getRadius() , Toast.LENGTH_LONG).show();
-                buildDialog2();
+                StopLocationUpdates();
+                stopButton.setVisibility(View.INVISIBLE);
+                button.setVisibility(View.VISIBLE);
+                polyline.remove();
+                mCircle.remove();
+                destM.remove();
+                String journeyStatus = "Finished";
+                //TODO - ALERT Builder
+                tasksRef.child("journeyStatus").setValue(journeyStatus);
+
+                String id_Journey = trustedContactEmail + journeyStatus;
+                tasksRef.child("ID_journeyStatus").setValue(id_Journey);
 
             }
 
@@ -413,6 +421,7 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
                 else {
 
                     String state = String.valueOf(task.getResult().child("DangerLevel").getValue());
+                    //String prevJourney = String.valueOf(task.getResult().child("journeyStatus").getValue());
                     dangerCheck(state);
 
 
@@ -423,9 +432,6 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
 
     }
 
-    public void setDangerLevel(String dangerLevel) {
-        tasksRef.child("DangerLevel").setValue(dangerLevel);
-    }
 
     private void drawMarkerWithCircle(LatLng position){
         double radiusInMeters = 20.0;
@@ -458,7 +464,7 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
                     public void onClick(DialogInterface dialog, int which) {
                         // Nothing
                         String dangerLevel = "Safe";
-                        setDangerLevel(dangerLevel);
+                        tasksRef.child("DangerLevel").setValue(dangerLevel);
                     }
                 })
                 .setNegativeButton("I'm in Danger", new DialogInterface.OnClickListener() {
@@ -466,40 +472,13 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
                     public void onClick(DialogInterface dialog, int which) {
                         // Nothing
                         String dangerLevel = "Danger";
-                        setDangerLevel(dangerLevel);
+                        tasksRef.child("DangerLevel").setValue(dangerLevel);
                     }
                 })
                 .create();
         DialogTimeoutListener listener = new DialogTimeoutListener(tasksRef,1);
         dialog.setOnShowListener(listener);
         dialog.setOnDismissListener(listener);
-        dialog.show();
-    }
-
-    private void buildDialog2() {
-         dialog = new AlertDialog.Builder(this)
-                .setTitle("End Journey")
-                .setMessage("We have detected you have arrived at your destination ")
-                .setPositiveButton("End Journey", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Nothing
-                        String dangerLevel = "Safe";
-                        setDangerLevel(dangerLevel);
-                        endJourney();
-                        dialog.dismiss();
-                    }
-                })
-                .setNegativeButton("I have not arrived", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Snooze functionality
-                        dialog.dismiss();
-                    }
-                })
-                .create();
-        DialogTimeoutListener listener = new DialogTimeoutListener(tasksRef,4);
-        dialog.setOnShowListener(listener);
         dialog.show();
     }
 
@@ -646,12 +625,11 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
 
         FloatingActionButton button =  findViewById(R.id.floatingActionButton2);
         //Button button3 = (Button) findViewById(R.id.button3);
-         FABStart = findViewById(R.id.floatingActionButton2);
-         FABEnd = findViewById(R.id.floatingActionButton4);
+        FloatingActionButton FABStart = findViewById(R.id.floatingActionButton2);
+        FloatingActionButton FABEnd = findViewById(R.id.floatingActionButton4);
         //TextView textView = (TextView) findViewById(R.id.textView);
         AutoCompleteTextView editTextSearch = findViewById(R.id.actv);
-        TextView What3WordsText = findViewById(R.id.what3WordsText);
-        //What3Words();
+
 
 
 
@@ -659,16 +637,13 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
         editTextSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void afterTextChanged(Editable s) {
-                //editTextSearch.clearFocus();
-                //Button buttonClear = (Button) findViewById(R.id.buttonClear);
-               // buttonClear.setVisibility(View.INVISIBLE);
 
             }
 
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                FABStart.setVisibility(s.toString().trim().length() > 0 ? View.VISIBLE : View.INVISIBLE);
+                button.setVisibility(s.toString().trim().length() > 0 ? View.VISIBLE : View.INVISIBLE);
                 ArrayList<String> list = tinydb.getListString("yourkey");
 
                 getSuggested(list);
@@ -679,15 +654,6 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
         FABStart.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.O)
             public void onClick(View v) {
-
-
-                Object trustedContactEmailNullCheck = dropdown.getSelectedItem();
-                if (trustedContactEmailNullCheck == null){
-                    Toast toast = Toast.makeText(getApplicationContext(), "Please Add a friend to share your journey with", Toast.LENGTH_SHORT);
-                    toast.show();
-                }
-                else{
-
                 Toast toast = Toast.makeText(getApplicationContext(), "Journey Started", Toast.LENGTH_SHORT);
                 toast.show();
                 FABStart.setVisibility(View.INVISIBLE);
@@ -724,21 +690,42 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
 
                             @Override
                             public void onResponse(JSONObject response) {
-                                //textView.setText("Response: " + response.toString());
 
                                 try {
-
                                     JSONObject obj = new JSONObject(response.toString());
-                                    //textView.setText("Response: " + response.toString());
-                                    String encoded_Route = obj.getJSONArray("routes").getJSONObject(0).getJSONObject("overview_polyline").getString("points");
 
+                                    // gets duration in seconds from json array
                                     Integer duration = obj.getJSONArray("routes").getJSONObject(0).getJSONArray("legs").getJSONObject(0).getJSONObject("duration").getInt("value");
-                                    //JSONObject routeObject = obj.getJSONObject("route"); // pull out the "route" object
-                                    //JSONObject durationObject = routeObject.getJSONObject("duration"); // pull out the "duration" object
-                                    //String duration = durationObject.getString("text"); //this should be the duration text value (20 hours 40 mins)
-                                    Log.d("ADebugTag", "Value: " + duration);
 
-                                    //textView.setText("Response: " + encoded_Route);
+                                    // converts duration to hours and minutes
+                                    int minutes = (duration/60)%60;
+                                    int hours = (duration/60)/60;
+
+                                    // gets current hour and minute
+                                    int currentMin = LocalDateTime.now().getMinute();
+                                    int currentHour = LocalDateTime.now().getHour();
+
+                                    // adds hours and minutes of journey duration to current time to get ETA
+                                    if (minutes + currentMin > 59) {
+                                        etaMin = (minutes+currentMin)-60;
+                                        hours = hours+1;
+                                    } else {
+                                        etaMin = minutes+currentMin;
+                                    }
+                                    if (hours + currentHour > 23) {
+                                        etaHour = (hours+currentHour)-24;
+                                    } else {
+                                        etaHour = hours+currentHour;
+                                    }
+                                    // converts eta to string and displays it on UI
+                                    String hour = Integer.toString(etaHour);
+                                    String minute = Integer.toString(etaMin);
+                                    TextView uiETA = findViewById(R.id.uiETA);
+                                    String stringETA = hour + ":" + minute;
+                                    uiETA.setText(stringETA);
+
+                                    // gets route from json array and draws polyline of route on map
+                                    String encoded_Route = obj.getJSONArray("routes").getJSONObject(0).getJSONObject("overview_polyline").getString("points");
                                     decodedPath = PolyUtil.decode(encoded_Route);
                                     polyline = mMap.addPolyline(new PolylineOptions().addAll(decodedPath));
 
@@ -746,14 +733,15 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
                                     String start_long = obj.getJSONArray("routes").getJSONObject(0).getJSONArray("legs").getJSONObject(0).getJSONObject("start_location").getString("lng");
                                     LatLng startCords = new LatLng( Double.parseDouble(start_lat), Double.parseDouble(start_long));
 
+                                    // adds destination marker to map
                                     String end_lat = obj.getJSONArray("routes").getJSONObject(0).getJSONArray("legs").getJSONObject(0).getJSONObject("end_location").getString("lat");
                                     String end_long = obj.getJSONArray("routes").getJSONObject(0).getJSONArray("legs").getJSONObject(0).getJSONObject("end_location").getString("lng");
                                     destCords = new LatLng( Double.parseDouble(end_lat), Double.parseDouble(end_long));
                                     destM = mMap.addMarker(new MarkerOptions().position(destCords).title("Destination Location"));
-                                    trustedContactEmail = dropdown.getSelectedItem().toString();
                                     drawMarkerWithCircle(destCords);
-                                    tasksRef = myRef.push();
 
+                                    tasksRef = myRef.push();
+                                    trustedContactEmail = dropdown.getSelectedItem().toString();
                                     Journey journey = new Journey(startCords,destCords,GetCurrentUser(),trustedContactEmail,tasksRef);
                                     journey.add2Fire();
 
@@ -785,23 +773,34 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
                         });
 
                 mQueue.add(jsonObjectRequest);
-            }}
+            }
         });
 
-         SafeButton = findViewById(R.id.SafeButton);
+        FloatingActionButton SafeButton = findViewById(R.id.SafeButton);
         FABEnd.setOnClickListener(new View.OnClickListener() {public void onClick(View v) {
 
-           endJourney();
+            Toast toast = Toast.makeText(getApplicationContext(), "Journey Ended", Toast.LENGTH_SHORT);
+            toast.show();
+            StopLocationUpdates();
+            FABEnd.setVisibility(View.INVISIBLE);
+            FABStart.setVisibility(View.VISIBLE);
+            DangerButton.setVisibility(View.INVISIBLE);
+            SafeButton.setVisibility(View.INVISIBLE);
+            polyline.remove();
+            mCircle.remove();
+            destM.remove();
+            String journeyStatus = "Finished";
+            String id_Journey = trustedContactEmail + journeyStatus;
+            tasksRef.child("ID_journeyStatus").setValue(id_Journey);
+            tasksRef.child("journeyStatus").setValue(journeyStatus);
+            dialog = null;
+            polyline = null;
+
         }
 
             });
 
-       /* button3.setOnClickListener(new View.OnClickListener() {public void onClick(View v) {
-            Intent intent = new Intent(getApplicationContext(), TrustedActivity.class);
-            startActivity(intent); //change activity
 
-        }
-        });*/
 
     }
     public void addToSuggested(String editTextValue2){
@@ -826,27 +825,6 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
 
     }
 
-    public void endJourney(){
-        Toast toast = Toast.makeText(getApplicationContext(), "Journey Ended", Toast.LENGTH_SHORT);
-        toast.show();
-        StopLocationUpdates();
-        FABEnd.setVisibility(View.INVISIBLE);
-        FABStart.setVisibility(View.VISIBLE);
-        DangerButton.setVisibility(View.INVISIBLE);
-        SafeButton.setVisibility(View.INVISIBLE);
-        polyline.remove();
-        mCircle.remove();
-        destM.remove();
-        String journeyStatus = "Finished";
-        String id_Journey = trustedContactEmail + journeyStatus;
-        tasksRef.child("ID_journeyStatus").setValue(id_Journey);
-        tasksRef.child("journeyStatus").setValue(journeyStatus);
-        dialog = null;
-        polyline = null;
-
-
-    }
-
     public void dangerZone(){
         dialog = new AlertDialog.Builder(this)
                 .setTitle("Danger Detected")
@@ -859,7 +837,6 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
                         tasksRef.child("DangerLevel").setValue(dangerLevel);
                     }
                 })
-
                 .setNegativeButton("Call Emergency Services", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -869,15 +846,6 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
 
                     }
                 })
-              .setNeutralButton("Ask Friend to Call 999",
-                new DialogInterface.OnClickListener()
-                {
-                    public void onClick(DialogInterface dialog, int id)
-                    {
-                        String dangerLevel = "Please Call Emergency Services";
-                        tasksRef.child("DangerLevel").setValue(dangerLevel);
-                    }
-                })
                 .create();
         DialogTimeoutListener listener = new DialogTimeoutListener(tasksRef,2);
         dialog.setOnShowListener(listener);
@@ -885,12 +853,10 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
         dialog.show();
         Button btnPositive = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
         Button btnNegative = dialog.getButton(AlertDialog.BUTTON_NEGATIVE);
-        Button btnNeut = dialog.getButton(AlertDialog.BUTTON_NEUTRAL);
         LinearLayout.LayoutParams positiveButtonLL = (LinearLayout.LayoutParams) btnPositive.getLayoutParams();
         positiveButtonLL.gravity = Gravity.CENTER;
         btnPositive.setLayoutParams(positiveButtonLL);
         btnNegative.setLayoutParams(positiveButtonLL);
-        btnNeut.setLayoutParams(positiveButtonLL);
 
 
 
@@ -929,7 +895,6 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
         public String dangerLevel;
         public String journeyStatus;
         public String ETA;
-        public String What3Words;
         public String ID_js;
         public DatabaseReference tasksRef;
 
@@ -946,7 +911,6 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
             ETA = "Dummy Data";
             tasksRef = ref;
             ID_js = trusted + journeyStatus;
-            What3Words = what3wordsReturn;
 
 
 
@@ -963,7 +927,6 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
             journey.put("journeyStatus", journeyStatus);
             journey.put("ID_journeyStatus", ID_js);
             journey.put("ETA", ETA);
-            journey.put("What3Words", What3Words);
 
 
 
