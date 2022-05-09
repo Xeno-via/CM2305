@@ -85,7 +85,8 @@ public class TrustedActivity extends AppCompatActivity {
                         sendOnChannel1();
                     }
 
-                Log.d(TAG, "Value is: " + value);}
+                //Log.d(TAG, "Value is: " + value);
+                    }
             }
 
             @Override

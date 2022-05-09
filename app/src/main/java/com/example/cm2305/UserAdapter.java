@@ -1,5 +1,7 @@
 package com.example.cm2305;
 
+import static android.content.ContentValues.TAG;
+import static android.graphics.Color.RED;
 import static com.firebase.ui.auth.AuthUI.getApplicationContext;
 
 import android.app.Activity;
@@ -10,13 +12,20 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -55,6 +64,14 @@ public class UserAdapter extends FirebaseRecyclerAdapter<User, UserAdapter.UserH
         holder.textViewJourneyStatus.setText(String.valueOf(model.getJourneyStatus()));
         holder.textViewWhat3Words.setText(String.valueOf(model.getWhat3Words()));
 
+        if (model.getDangerLevel().equals("Danger")){
+            Log.d(TAG, "Value is: " + model.getDangerLevel());
+            holder.relLay.setBackgroundColor(RED);
+
+        }
+        else {
+            holder.relLay.setBackgroundColor(Color.parseColor("#35C671"));
+        }
 
     }
 
@@ -75,6 +92,8 @@ public class UserAdapter extends FirebaseRecyclerAdapter<User, UserAdapter.UserH
         TextView textViewDangerLevel;
         TextView textViewJourneyStatus;
         TextView textViewWhat3Words;
+        RelativeLayout relLay;
+
 
         public UserHolder(View itemView) {
             super(itemView);
@@ -83,7 +102,11 @@ public class UserAdapter extends FirebaseRecyclerAdapter<User, UserAdapter.UserH
             textViewDangerLevel = itemView.findViewById(R.id.text_view_DangerLevel);
             textViewJourneyStatus = itemView.findViewById(R.id.text_view_journeyStatus);
             textViewWhat3Words= itemView.findViewById(R.id.text_view_What3Words);
+            relLay = itemView.findViewById(R.id.relLay);
+
         }
+
+
     }
 
 

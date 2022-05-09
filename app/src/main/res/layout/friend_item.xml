@@ -16,14 +16,14 @@
 
         <TextView
             android:id="@+id/text_view_Email"
-            android:layout_width="172dp"
+            android:layout_width="295dp"
             android:layout_height="wrap_content"
             android:layout_below="@+id/text_view_Name"
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
-            android:layout_marginStart="110dp"
+            android:layout_marginStart="46dp"
             android:layout_marginTop="-14dp"
-            android:layout_marginEnd="121dp"
+            android:layout_marginEnd="46dp"
             android:gravity="center"
             android:text="Email"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"

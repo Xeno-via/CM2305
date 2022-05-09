@@ -32,6 +32,7 @@ import org.json.*;
 
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.HashMap;
 import java.util.List;
@@ -149,7 +150,7 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
 
     private AlertDialog.Builder dialogBuilder;
     private AlertDialog popupDialog;
-
+    private long snoozeTime;
     private int etaHour;
     private int etaMin;
 
@@ -395,7 +396,7 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
             int currentHour = LocalDateTime.now().getHour();
             int currentMin = LocalDateTime.now().getMinute();
             if (currentHour >= etaHour && currentMin >= etaMin) {
-                buildDialog();
+                getDangerLevel();
             }
 
             if( results[0] > mCircle.getRadius()  ){
@@ -450,8 +451,10 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
 
         //if( (dialog != null && !prevJourney.equals("In Progress")) ||  (dialog != null && (dialog.isShowing() || state != "Safe"))) {
         if ((dialog == null && state.equals("Safe")) || (dialog != null && !dialog.isShowing() && state.equals("Safe")) ){
+            if (snoozeTime == 1 || System.currentTimeMillis() >= snoozeTime + 60000){
+                buildDialog();
+            }
 
-            buildDialog();
         }
         else{
             //Do Nothing -- One already open
@@ -462,15 +465,24 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
         dialog = new AlertDialog.Builder(this)
                 .setTitle("Danger Detected")
                 .setMessage("We have detected anomalous behaviour, Are you Okay? ")
-                .setPositiveButton("I'm Okay", new DialogInterface.OnClickListener() {
+                .setPositiveButton("I'm Okay - (Snooze)               ", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        // Nothing
                         String dangerLevel = "Safe";
                         setDangerLevel(dangerLevel);
+                        snoozeTime = System.currentTimeMillis();
+
                     }
                 })
-                .setNegativeButton("I'm in Danger", new DialogInterface.OnClickListener() {
+                .setNeutralButton("I'm Okay                           ", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String dangerLevel = "Safe";
+                        setDangerLevel(dangerLevel);
+                        snoozeTime = 1;
+                    }
+                })
+                .setNegativeButton("I'm in Danger              ", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // Nothing
@@ -698,7 +710,7 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
 
 
                 addToSuggested(editTextValue2);
-
+                snoozeTime = 1;
 
                 //TextView textView = (TextView) findViewById(R.id.textView);
                 String str_origin = "origin="+editTextValue;
@@ -817,12 +829,6 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
 
             });
 
-       /* button3.setOnClickListener(new View.OnClickListener() {public void onClick(View v) {
-            Intent intent = new Intent(getApplicationContext(), TrustedActivity.class);
-            startActivity(intent); //change activity
-
-        }
-        });*/
 
     }
     public void addToSuggested(String editTextValue2){
