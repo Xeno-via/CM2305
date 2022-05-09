@@ -1,0 +1,296 @@
+@startuml
+
+title __CM2305.APP's Class Diagram__\n
+
+  namespace androidx.databinding {
+    class androidx.databinding.DataBinderMapperImpl {
+    }
+  }
+  
+
+  namespace androidx.databinding {
+    interface androidx.databinding.DataBindingComponent {
+    }
+  }
+  
+
+  namespace androidx.databinding {
+    namespace library.baseAdapters {
+      class androidx.databinding.library.baseAdapters.BR {
+      }
+    }
+  }
+  
+
+  namespace com.example.cm2305 {
+    class com.example.cm2305.App {
+    }
+  }
+  
+
+  namespace com.example.cm2305 {
+    class com.example.cm2305.BR {
+    }
+  }
+  
+
+  namespace com.example.cm2305 {
+    class com.example.cm2305.BuildConfig {
+    }
+  }
+  
+
+  namespace com.example.cm2305 {
+    class com.example.cm2305.CheckTrusted {
+    }
+  }
+  
+
+  namespace com.example.cm2305 {
+    class com.example.cm2305.DataBinderMapperImpl {
+    }
+  }
+  
+
+  namespace com.example.cm2305 {
+    class com.example.cm2305.Database {
+    }
+  }
+  
+
+  namespace com.example.cm2305 {
+    class com.example.cm2305.DatabaseActivity {
+    }
+  }
+  
+
+  namespace com.example.cm2305 {
+    class com.example.cm2305.FirebaseUIActivity {
+    }
+  }
+  
+
+  namespace com.example.cm2305 {
+    class com.example.cm2305.FriendAdapter {
+    }
+  }
+  
+
+  namespace com.example.cm2305 {
+    class com.example.cm2305.FriendRequestActivity {
+    }
+  }
+  
+
+  namespace com.example.cm2305 {
+    class com.example.cm2305.FriendRequests {
+    }
+  }
+  
+
+  namespace com.example.cm2305 {
+    class com.example.cm2305.FriendsListActivity {
+    }
+  }
+  
+
+  namespace com.example.cm2305 {
+    class com.example.cm2305.MapsActivity {
+    }
+  }
+  
+
+  namespace com.example.cm2305 {
+    class com.example.cm2305.MySuggestionProvider {
+    }
+  }
+  
+
+  namespace com.example.cm2305 {
+    class com.example.cm2305.TinyDB {
+    }
+  }
+  
+
+  namespace com.example.cm2305 {
+    class com.example.cm2305.TrustedActivity {
+    }
+  }
+  
+
+  namespace com.example.cm2305 {
+    class com.example.cm2305.User {
+    }
+  }
+  
+
+  namespace com.example.cm2305 {
+    class com.example.cm2305.UserAdapter {
+    }
+  }
+  
+
+  namespace com.example.cm2305 {
+    class com.example.cm2305.add_account {
+    }
+  }
+  
+
+  namespace com.example.cm2305 {
+    class com.example.cm2305.add_contact {
+    }
+  }
+  
+
+  namespace com.example.cm2305 {
+    class com.example.cm2305.add_location {
+    }
+  }
+  
+
+  namespace com.example.cm2305 {
+    namespace data {
+      class com.example.cm2305.data.LoginDataSource {
+      }
+    }
+  }
+  
+
+  namespace com.example.cm2305 {
+    namespace data {
+      class com.example.cm2305.data.LoginRepository {
+      }
+    }
+  }
+  
+
+  namespace com.example.cm2305 {
+    namespace data {
+      class com.example.cm2305.data.Result {
+      }
+    }
+  }
+  
+
+  namespace com.example.cm2305 {
+    namespace data {
+      namespace model {
+        class com.example.cm2305.data.model.LoggedInUser {
+        }
+      }
+    }
+  }
+  
+
+  namespace com.example.cm2305 {
+    namespace ui.login {
+      class com.example.cm2305.ui.login.LoggedInUserView {
+      }
+    }
+  }
+  
+
+  namespace com.example.cm2305 {
+    namespace ui.login {
+      class com.example.cm2305.ui.login.LoginActivity {
+      }
+    }
+  }
+  
+
+  namespace com.example.cm2305 {
+    namespace ui.login {
+      class com.example.cm2305.ui.login.LoginFormState {
+      }
+    }
+  }
+  
+
+  namespace com.example.cm2305 {
+    namespace ui.login {
+      class com.example.cm2305.ui.login.LoginResult {
+      }
+    }
+  }
+  
+
+  namespace com.example.cm2305 {
+    namespace ui.login {
+      class com.example.cm2305.ui.login.LoginViewModel {
+      }
+    }
+  }
+  
+
+  namespace com.example.cm2305 {
+    namespace ui.login {
+      class com.example.cm2305.ui.login.LoginViewModelFactory {
+      }
+    }
+  }
+  
+
+  namespace com.example.cm2305 {
+    class com.example.cm2305.view_account {
+    }
+  }
+  
+
+  namespace com.example.cm2305 {
+    class com.example.cm2305.view_contact {
+    }
+  }
+  
+
+  namespace com.example.cm2305 {
+    class com.example.cm2305.view_location {
+    }
+  }
+  
+
+  androidx.databinding.DataBinderMapperImpl -up-|> androidx.databinding.MergedDataBinderMapper
+  com.example.cm2305.App -up-|> android.app.Application
+  com.example.cm2305.CheckTrusted -up-|> androidx.fragment.app.FragmentActivity
+  com.example.cm2305.DataBinderMapperImpl -up-|> androidx.databinding.DataBinderMapper
+  com.example.cm2305.DatabaseActivity -up-|> androidx.appcompat.app.AppCompatActivity
+  com.example.cm2305.FirebaseUIActivity -up-|> androidx.appcompat.app.AppCompatActivity
+  com.example.cm2305.FriendAdapter -up-|> com.firebase.ui.firestore.FirestoreRecyclerAdapter
+  com.example.cm2305.FriendAdapter o-- com.example.cm2305.FriendAdapter.OnItemClickListener : listener
+  com.example.cm2305.FriendRequestActivity -up-|> androidx.appcompat.app.AppCompatActivity
+  com.example.cm2305.FriendRequestActivity o-- com.example.cm2305.FriendAdapter : adapter
+  com.example.cm2305.FriendsListActivity -up-|> androidx.appcompat.app.AppCompatActivity
+  com.example.cm2305.FriendsListActivity o-- com.example.cm2305.FriendAdapter : adapter
+  com.example.cm2305.MapsActivity .up.|> com.google.android.gms.maps.OnMapReadyCallback
+  com.example.cm2305.MapsActivity .up.|> com.squareup.seismic.ShakeDetector.Listener
+  com.example.cm2305.MapsActivity -up-|> androidx.fragment.app.FragmentActivity
+  com.example.cm2305.MapsActivity o-- com.example.cm2305.databinding.ActivityMapsBinding : binding
+  com.example.cm2305.MapsActivity o-- com.example.cm2305.TinyDB : tinydb
+  com.example.cm2305.MySuggestionProvider -up-|> android.content.SearchRecentSuggestionsProvider
+  com.example.cm2305.TrustedActivity -up-|> androidx.appcompat.app.AppCompatActivity
+  com.example.cm2305.TrustedActivity o-- com.example.cm2305.UserAdapter : adapter
+  com.example.cm2305.UserAdapter -up-|> com.firebase.ui.database.FirebaseRecyclerAdapter
+  com.example.cm2305.add_account -up-|> androidx.fragment.app.Fragment
+  com.example.cm2305.add_contact -up-|> androidx.fragment.app.Fragment
+  com.example.cm2305.add_location -up-|> androidx.fragment.app.Fragment
+  com.example.cm2305.data.LoginRepository o-- com.example.cm2305.data.LoginDataSource : dataSource
+  com.example.cm2305.data.LoginRepository o-- com.example.cm2305.data.model.LoggedInUser : user
+  com.example.cm2305.ui.login.LoginActivity -up-|> androidx.appcompat.app.AppCompatActivity
+  com.example.cm2305.ui.login.LoginActivity o-- com.example.cm2305.databinding.ActivityLoginBinding : binding
+  com.example.cm2305.ui.login.LoginActivity o-- com.example.cm2305.ui.login.LoginViewModel : loginViewModel
+  com.example.cm2305.ui.login.LoginResult o-- com.example.cm2305.ui.login.LoggedInUserView : success
+  com.example.cm2305.ui.login.LoginViewModel -up-|> androidx.lifecycle.ViewModel
+  com.example.cm2305.ui.login.LoginViewModel o-- com.example.cm2305.data.LoginRepository : loginRepository
+  com.example.cm2305.ui.login.LoginViewModelFactory .up.|> androidx.lifecycle.ViewModelProvider.Factory
+  com.example.cm2305.view_account -up-|> androidx.fragment.app.Fragment
+  com.example.cm2305.view_contact -up-|> androidx.fragment.app.Fragment
+  com.example.cm2305.view_location -up-|> androidx.fragment.app.Fragment
+
+
+right footer
+
+
+PlantUML diagram generated by SketchIt! (https://bitbucket.org/pmesmeur/sketch.it)
+For more information about this tool, please contact philippe.mesmeur@gmail.com
+endfooter
+
+@enduml

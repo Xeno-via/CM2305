@@ -1,0 +1,343 @@
+@startuml
+
+title __CM2305's Class Diagram__\n
+
+  namespace com.example.cm2305 {
+    class com.example.cm2305.NotificationChannel{
+        {static} + CHANNEL_1_ID : String
+        {static} + CHANNEL_2_ID : String
+        + onCreate()
+        - createNotificationChannels()
+    }
+  }
+
+
+
+
+
+  namespace com.example.cm2305 {
+    class com.example.cm2305.FirebaseUIActivity {
+        - signInLauncher : ActivityResultLauncher<Intent>
+        + catchEmailLink()
+        + createSignInIntent()
+        + delete()
+        + emailLink()
+        + privacyAndTerms()
+        + signOut()
+        + themeAndLogo()
+        # onCreate()
+        - onSignInResult()
+    }
+  }
+
+
+  namespace com.example.cm2305 {
+    class com.example.cm2305.FriendAdapter {
+        + FriendAdapter()
+        + deleteItem()
+        + onCreateViewHolder()
+        + setOnItemClickListener()
+        # onBindViewHolder()
+    }
+  }
+
+
+  namespace com.example.cm2305 {
+    class com.example.cm2305.FriendAdapter.FriendHolder {
+        ~ textViewEmail : TextView
+        ~ textViewName : TextView
+        + FriendHolder()
+    }
+  }
+
+
+  namespace com.example.cm2305 {
+    interface com.example.cm2305.FriendAdapter.OnItemClickListener {
+        {abstract} + onItemClick()
+    }
+  }
+
+
+  namespace com.example.cm2305 {
+    class com.example.cm2305.FriendRequestActivity {
+        ~ email : String
+        - db : FirebaseFirestore
+        # onCreate()
+        # onStart()
+        # onStop()
+        - setUpRecyclerView()
+    }
+  }
+
+
+  namespace com.example.cm2305 {
+    class com.example.cm2305.FriendRequests {
+        - Email : String
+        - Name : String
+        + FriendRequests()
+        + FriendRequests()
+        + getEmail()
+        + getName()
+    }
+  }
+
+
+  namespace com.example.cm2305 {
+    class com.example.cm2305.FriendsListActivity {
+        ~ Useremail : String
+        - db : FirebaseFirestore
+        # onCreate()
+        # onStart()
+        # onStop()
+        - setUpRecyclerView()
+    }
+  }
+
+
+  namespace com.example.cm2305 {
+    class com.example.cm2305.MapsActivity {
+        {static} + currentlocMark : Marker
+        {static} + decodedPath : List<LatLng>
+        {static} + destCords : LatLng
+        + destM : Marker
+        {static} + polyline : Polyline
+        + tasksRef : DatabaseReference
+        + what3wordsReturn : String
+        ~ fusedLocationProviderClient : FusedLocationProviderClient
+        ~ latitude : double
+        ~ locationCallBack : LocationCallback
+        ~ locationRequest : LocationRequest
+        ~ longitude : double
+        {static} - PERMISSIONS_FINE_LOCATION : int
+        - cancellationTokenSource : CancellationTokenSource
+        - dialog : AlertDialog
+        - dialogBuilder : Builder
+        - dropdown : Spinner
+        - mCircle : Circle
+        - mMap : GoogleMap
+        - mQueue : RequestQueue
+        - mTextViewResult : TextView
+        - popupDialog : AlertDialog
+        - trustedContactEmail : String
+        + What3Words()
+        + addToSuggested()
+        + clearSuggested()
+        + dangerCheck()
+        + endJourney()
+        + setDangerLevel()
+        + dangerZone()
+        + editSettingsDialog()
+        + getDangerLevel()
+        + getSuggested()
+        + hearShake()
+        {static} + isPointOnPolyline()
+        + onBackPressed()
+        + onMapReady()
+        + onRequestPermissionsResult()
+        + onResume()
+        {static} + pause()
+        + restart()
+        # onCreate()
+        # onDestroy()
+        - GetCurrentUser()
+        - StartLocationUpdates()
+        - StopLocationUpdates()
+        - buildDialog()
+        - drawMarkerWithCircle()
+        - exitByBackKey()
+        - updateGPS()
+        - updateVals()
+    }
+  }
+
+
+  namespace com.example.cm2305 {
+    class com.example.cm2305.MapsActivity.DialogTimeoutListener {
+        {static} - AUTO_DISMISS_MILLIS : int
+        - arg : Integer
+        - mCountDownTimer : CountDownTimer
+        - taskRef : DatabaseReference
+        + DialogTimeoutListener()
+        + onDismiss()
+        + onShow()
+    }
+  }
+
+
+  namespace com.example.cm2305 {
+    class com.example.cm2305.MapsActivity.Journey {
+        + ETA : Int
+        + ID_js : String
+        + currCords : LatLng
+        + dangerLevel : String
+        + destCords : LatLng
+        + journeyStatus : String
+        + startCords : LatLng
+        + tasksRef : DatabaseReference
+        + trustedUserName : String
+        + userName : String
+        + Journey() : Void
+        + add2Fire()
+        + getInstance()
+        + getETA()
+
+    }
+  }
+
+
+  namespace com.example.cm2305 {
+    class com.example.cm2305.MySuggestionProvider {
+        {static} + AUTHORITY : String
+        {static} + MODE : int
+        + MySuggestionProvider()
+    }
+  }
+
+
+  namespace com.example.cm2305 {
+    class com.example.cm2305.TinyDB {
+        - DEFAULT_APP_IMAGEDATA_DIRECTORY : String
+        - context : Context
+        - lastImagePath : String
+        - preferences : SharedPreferences
+        + TinyDB()
+        + clear()
+        + deleteImage()
+        + getAll()
+        + getBoolean()
+        + getDouble()
+        + getFloat()
+        + getImage()
+        + getInt()
+        + getListBoolean()
+        + getListDouble()
+        + getListInt()
+        + getListLong()
+        + getListString()
+        + getLong()
+        + getSavedImagePath()
+        + getString()
+        {static} + isExternalStorageReadable()
+        {static} + isExternalStorageWritable()
+        + objectExists()
+        + putBoolean()
+        + putDouble()
+        + putFloat()
+        + putImage()
+        + putImageWithFullPath()
+        + putInt()
+        + putListBoolean()
+        + putListDouble()
+        + putListInt()
+        + putListLong()
+        + putListString()
+        + putLong()
+        + putString()
+        + registerOnSharedPreferenceChangeListener()
+        + remove()
+        + unregisterOnSharedPreferenceChangeListener()
+        - checkForNullKey()
+        - checkForNullValue()
+        - saveBitmap()
+        - setupFullPath()
+    }
+  }
+
+
+  namespace com.example.cm2305 {
+    class com.example.cm2305.TrustedActivity {
+        ~ email : String
+        - myRef : DatabaseReference
+        - notificationManager : NotificationManagerCompat
+        + sendOnChannel1()
+        # onCreate()
+        # onStart()
+        # onStop()
+        - setUpRecyclerView()
+    }
+  }
+
+
+  namespace com.example.cm2305 {
+    class com.example.cm2305.User {
+        - CurrentCords : String
+        - DangerLevel : String
+        - ETA : String
+        - Name : String
+        - journeyStatus : String
+        - What3Words: String
+        + User()
+        + User()
+        + getCurrentCords()
+        + getDangerLevel()
+        + getJourneyStatus()
+        + getWhat3Words()
+        + getName()
+    }
+  }
+
+
+  namespace com.example.cm2305 {
+    class com.example.cm2305.UserAdapter {
+        + UserAdapter()
+        + onCreateViewHolder()
+        # onBindViewHolder()
+    }
+  }
+
+
+  namespace com.example.cm2305 {
+    class com.example.cm2305.UserAdapter.UserHolder {
+        ~ textViewCurrentCoords : TextView
+        ~ textViewDangerLevel : TextView
+        ~ textViewJourneyStatus : TextView
+        ~ textViewName : TextView
+        ~ textViewWhat3Words : TextView
+        + UserHolder()
+    }
+  }
+
+skinparam legendBackgroundColor #ffffff
+legend
+
+|= field |= method |=  |
+|  <img:http://s.plantuml.com/private-field.png>     |   <img:http://s.plantuml.com/private-method.png>     | private |
+|  <img:http://s.plantuml.com/protected-field.png>   |   <img:http://s.plantuml.com/protected-method.png>   | protected |
+|  <img:http://s.plantuml.com/package-private-field.png>     |   <img:http://s.plantuml.com/package-private-method.png>    | package private |
+|  <img:http://s.plantuml.com/public-field.png>     |   <img:http://s.plantuml.com/public-method.png>     | public |
+
+endlegend
+
+  com.example.cm2305.FriendAdapter "1" -up-> "0..*" com.example.cm2305.FriendRequests:Model
+  com.example.cm2305.MapsActivity.Journey -up-|> com.example.cm2305.MapsActivity.Journey : singleton
+  com.example.cm2305.UserAdapter "1" -up-> "0..*" com.example.cm2305.User:Model
+  com.example.cm2305.NotificationChannel-up-|> android.app.Application
+  com.example.cm2305.FirebaseUIActivity -up-|> androidx.appcompat.app.AppCompatActivity
+  com.example.cm2305.FriendAdapter -up-|> com.firebase.ui.firestore.FirestoreRecyclerAdapter
+  com.example.cm2305.FriendAdapter o-- com.example.cm2305.FriendAdapter.OnItemClickListener : listener
+  com.example.cm2305.FriendAdapter +-down- com.example.cm2305.FriendAdapter.FriendHolder
+  com.example.cm2305.FriendAdapter +-down- com.example.cm2305.FriendAdapter.OnItemClickListener
+  com.example.cm2305.FriendAdapter.FriendHolder -up-|> androidx.recyclerview.widget.RecyclerView.ViewHolder
+  com.example.cm2305.FriendRequestActivity -up-|> androidx.appcompat.app.AppCompatActivity
+  com.example.cm2305.FriendRequestActivity o-- com.example.cm2305.FriendAdapter : adapter
+  com.example.cm2305.FriendsListActivity -up-|> androidx.appcompat.app.AppCompatActivity
+  com.example.cm2305.FriendsListActivity o-- com.example.cm2305.FriendAdapter : adapter
+  com.example.cm2305.MapsActivity .up.|> com.google.android.gms.maps.OnMapReadyCallback
+  com.example.cm2305.MapsActivity .up.|> com.squareup.seismic.ShakeDetector.Listener
+  com.example.cm2305.MapsActivity -up-|> androidx.fragment.app.FragmentActivity
+  com.example.cm2305.MapsActivity o-- com.example.cm2305.databinding.ActivityMapsBinding : binding
+  com.example.cm2305.MapsActivity o-- com.example.cm2305.TinyDB : tinydb
+  com.example.cm2305.MapsActivity +-down- com.example.cm2305.MapsActivity.DialogTimeoutListener
+  com.example.cm2305.MapsActivity +-down- com.example.cm2305.MapsActivity.Journey
+  com.example.cm2305.MapsActivity.DialogTimeoutListener .up.|> android.content.DialogInterface.OnDismissListener
+  com.example.cm2305.MapsActivity.DialogTimeoutListener .up.|> android.content.DialogInterface.OnShowListener
+  com.example.cm2305.MySuggestionProvider -up-|> android.content.SearchRecentSuggestionsProvider
+  com.example.cm2305.TrustedActivity -up-|> androidx.appcompat.app.AppCompatActivity
+  com.example.cm2305.TrustedActivity o-- com.example.cm2305.UserAdapter : adapter
+  com.example.cm2305.UserAdapter -up-|> com.firebase.ui.database.FirebaseRecyclerAdapter
+  com.example.cm2305.UserAdapter +-down- com.example.cm2305.UserAdapter.UserHolder
+  com.example.cm2305.UserAdapter.UserHolder -up-|> androidx.recyclerview.widget.RecyclerView.ViewHolder
+
+
+
+@enduml

@@ -49,7 +49,7 @@ public class FriendRequestActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.simple_list_item_1);
+        setContentView(R.layout.friend_layout);
 
 
 
@@ -68,16 +68,6 @@ public class FriendRequestActivity extends AppCompatActivity {
         setUpRecyclerView();
 
 
-        FloatingActionButton addFriend = findViewById(R.id.button_add_note);
-        addFriend.setOnClickListener( new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                // TODO Auto-generated method stub
-
-
-            }
-        });
     }
 
     private void setUpRecyclerView() {
@@ -119,6 +109,14 @@ public class FriendRequestActivity extends AppCompatActivity {
             Map<String, Object> docData = new HashMap<>();
             docData.put("Name", name);
             docData.put("Email", emailofFriend);
+
+
+            String nameofUser = "Name"; //TODO add name
+            String emailofUser = email;
+
+            Map<String, Object> docDataUser = new HashMap<>();
+            docDataUser.put("Name", nameofUser);
+            docDataUser.put("Email", emailofUser);
             db.collection("Users").document(email).collection("Friends").add(docData)
                     .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                 @Override
@@ -136,6 +134,19 @@ public class FriendRequestActivity extends AppCompatActivity {
                         }
                     });
 
+            db.collection("Users").document(friend.getEmail()).collection("Friends").add(docDataUser)
+                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                        @Override
+                        public void onSuccess(DocumentReference documentReference) {
+
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.w(TAG, "Error adding document", e);
+                        }
+                    });
 
         });
     }

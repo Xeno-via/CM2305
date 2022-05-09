@@ -30,19 +30,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0"></fragment>
 
-        <Button
-            android:id="@+id/buttonClear"
-            android:layout_width="134dp"
-            android:layout_height="54dp"
-            android:layout_marginTop="140dp"
-            android:text="Clear Search History"
-            android:translationX="30dp"
-            android:translationY="0dp"
-            android:visibility="invisible"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.202"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+
 
         <TextView
             android:id="@+id/text_view_countries"
@@ -63,7 +51,8 @@
             android:layout_marginEnd="36dp"
             android:completionThreshold="1"
             android:dropDownAnchor="@id/text_view_countries"
-            android:hint="Enter a Destination"
+            android:hint="Enter a Destination, Please specify City/Town"
+            android:textSize="14sp"
             android:minHeight="48dp"
             android:popupBackground="@color/colorAccent"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -87,6 +76,22 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.891" />
 
+        <TextView
+            android:id="@+id/uiETA"
+            android:layout_width="123dp"
+            android:layout_height="32dp"
+            android:background="#E11F26"
+            android:gravity="center"
+            android:text="ETA"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.6"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.891" />
+
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/floatingActionButton4"
             android:layout_width="wrap_content"
@@ -106,6 +111,7 @@
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="76dp"
             android:clickable="true"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@android:drawable/ic_media_play"
@@ -132,32 +138,52 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.891"
-            app:srcCompat="@drawable/what3words" />
+            app:srcCompat="@drawable/what3words"
+            android:src="@drawable/what3words"
+            tools:ignore="ContentDescription" />
 
         <Spinner
             android:id="@+id/spinner3"
-            android:layout_width="400dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="4dp"
+            android:layout_width="258dp"
+            android:layout_height="37dp"
+            android:layout_marginStart="64dp"
+            android:layout_marginTop="112dp"
             android:background="@android:drawable/btn_dropdown"
             android:spinnerMode="dropdown"
-            android:textColor="#000000"
+            android:textColor="#393737"
+            android:textSize="14sp"
             android:translationY="-110dp"
             android:visibility="visible"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/buttonClear"
+            app:layout_constraintTop_toBottomOf="@id/actv"
             tools:ignore="SpeakableTextPresentCheck"
             tools:visibility="visible" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/showSettingsButton"
+            android:id="@+id/DangerButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="76dp"
-            android:src="@drawable/ic_baseline_build_24"
+            android:src="@android:drawable/ic_dialog_alert"
+            android:visibility="invisible"
+            app:backgroundTint="@color/red"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/floatingActionButton4" />
+            app:layout_constraintEnd_toStartOf="@+id/floatingActionButton4"
+            tools:ignore="SpeakableTextPresentCheck" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/SafeButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="76dp"
+            android:src="@drawable/ic_safe_zone_svgrepo_com"
+            android:visibility="invisible"
+            app:backgroundTint="@color/teal_700"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/floatingActionButton4"
+            tools:ignore="SpeakableTextPresentCheck" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/showPrivacyButton"

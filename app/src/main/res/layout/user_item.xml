@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginEnd="8dp"
@@ -9,53 +10,131 @@
     app:cardBackgroundColor="#FFFFE8">
 
     <RelativeLayout
+        android:id="@+id/relLay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="#35C671"
         android:padding="8dp">
 
-        <TextView
-            android:id="@+id/text_view_Name"
-            android:layout_width="391dp"
-            android:layout_height="50dp"
-            android:layout_alignParentStart="true"
-            android:layout_marginStart="0dp"
-            android:layout_marginEnd="-291dp"
-            android:layout_toStartOf="@id/text_view_CurrentCoords"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:text="Name"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="375dp"
+            android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/text_view_CurrentCoords"
-            android:layout_width="326dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="123dp"
-            android:layout_marginEnd="22dp"
-            android:text="Current Position"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
+            <TextView
+                android:id="@+id/text_view_journeyStatus"
+                android:layout_width="104dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="28dp"
+                android:layout_marginTop="8dp"
+                android:gravity="center"
+                android:text="JourneyStatus"
+                android:textSize="16sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/text_view_journeyStatus2" />
 
-        <TextView
-            android:id="@+id/text_view_journeyStatus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/text_view_Name"
-            android:layout_alignParentStart="true"
-            android:layout_marginStart="21dp"
-            android:layout_marginTop="29dp"
-            android:text="JourneyStatus" />
+            <TextView
+                android:id="@+id/text_view_journeyStatus2"
+                android:layout_width="157dp"
+                android:layout_height="27dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="153dp"
+                android:gravity="center"
+                android:text="JourneyStatus"
+                android:textColor="#000000"
+                android:textIsSelectable="false"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toStartOf="@+id/text_view_DangerLevel2"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/text_view_Name" />
 
-        <TextView
-            android:id="@+id/text_view_DangerLevel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/text_view_journeyStatus"
-            android:layout_alignParentStart="true"
-            android:layout_marginStart="250dp"
-            android:layout_marginTop="-19dp"
-            android:text="DangerLevel" />
+            <TextView
+                android:id="@+id/text_view_CurrentCoords2"
+                android:layout_width="156dp"
+                android:layout_height="18dp"
+                android:layout_marginTop="120dp"
+                android:gravity="center"
+                android:text="Current Position"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.497"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/text_view_CurrentCoords"
+                android:layout_width="199dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="88dp"
+                android:layout_marginTop="28dp"
+                android:gravity="center"
+                android:shadowColor="#8FFFFFFF"
+                android:text="Current Position"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textColor="@android:color/secondary_text_light"
+                android:textSize="10sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/text_view_CurrentCoords2" />
+
+            <TextView
+                android:id="@+id/text_view_Name"
+                android:layout_width="200dp"
+                android:layout_height="29dp"
+                android:layout_marginTop="4dp"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:maxLines="1"
+                android:text="Name"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.497"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/text_view_DangerLevel"
+                android:layout_width="98dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="114dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="24dp"
+                android:gravity="center"
+                android:text="DangerLevel"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.857"
+                app:layout_constraintStart_toEndOf="@+id/text_view_journeyStatus"
+                app:layout_constraintTop_toBottomOf="@+id/text_view_DangerLevel2" />
+
+            <TextView
+                android:id="@+id/text_view_DangerLevel2"
+                android:layout_width="133dp"
+                android:layout_height="27dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:gravity="center"
+                android:text="DangerLevel"
+                android:textColor="#000000"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/text_view_Name" />
+
+            <TextView
+                android:id="@+id/text_view_What3Words"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="156dp"
+                android:layout_marginBottom="16dp"
+                android:gravity="center"
+                android:text="TextView"
+                android:textColor="@android:color/secondary_text_light"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </RelativeLayout>
 

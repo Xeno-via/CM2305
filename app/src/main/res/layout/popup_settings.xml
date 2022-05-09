@@ -43,18 +43,31 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/editTimeAllowance"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="92dp"
         android:text="Default"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTimeAllowance" />
+
+    <Button
+        android:id="@+id/buttonClear"
+        android:layout_width="134dp"
+        android:layout_height="54dp"
+        android:layout_marginTop="56dp"
+        android:text="Clear Search History"
+        android:translationX="30dp"
+        android:translationY="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.393"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/editTimeAllowance" />
 
     <Button
         android:id="@+id/saveSettingsButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/editTimeAllowance"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="32dp"
+        android:layout_marginTop="92dp"
+        android:layout_marginEnd="40dp"
         android:layout_toRightOf="@id/revertToDefaultButton"
         android:text="Save Settings"
         app:layout_constraintEnd_toEndOf="parent"
