@@ -225,6 +225,14 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
             }
         });
 
+        FloatingActionButton privacyInfoBtn = findViewById(R.id.showPrivacyButton);
+        privacyInfoBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                privacyInfoDialog();
+            }
+        });
+
     }
 
 
@@ -932,6 +940,16 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
         }
     }
 
+    public void privacyInfoDialog(){
+        // Build Dialog
+        dialogBuilder = new AlertDialog.Builder(this);
+        final View privacyPopupView = getLayoutInflater().inflate(R.layout.popup_privacy, null);
+
+        dialogBuilder.setView(privacyPopupView);
+        popupDialog = dialogBuilder.create();
+        popupDialog.show();
+    }
+
     public void editSettingsDialog(){
         // DEFAULT SETTINGS
         float defaultStrayingDistance = 50f;
@@ -959,9 +977,6 @@ public class  MapsActivity extends FragmentActivity implements OnMapReadyCallbac
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if (task.isSuccessful()) {
                     DocumentSnapshot userDocument = task.getResult();
-                    if (!userDocument.exists()){
-                        db.collection("Users").document(GetCurrentUser()).set(new HashMap<String, Object>());
-                    }
                     if (userDocument.getString("strayingDistance") != null) {
                         // if there is an entry for settings then show them in fields
                         editStrayingDistance.setText(userDocument.getString("strayingDistance"));

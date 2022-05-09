@@ -18,9 +18,13 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.ActionCodeSettings;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 public class FirebaseUIActivity extends AppCompatActivity {
@@ -71,6 +75,21 @@ public class FirebaseUIActivity extends AppCompatActivity {
         if (result.getResultCode() == RESULT_OK) {
             // Successfully signed in
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+            // If entry doesn't exist in database then make entry.
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            DocumentReference userReference = db.collection("Users").document(user.getEmail());
+            userReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        DocumentSnapshot userDocument = task.getResult();
+                        if (!userDocument.exists()) {
+                            db.collection("Users").document(user.getEmail()).set(new HashMap<String, Object>());
+                        }
+                    }
+                }
+            });
             Intent intent = new Intent(getApplicationContext(), MapsActivity.class);
             startActivity(intent); //change activity
             // ...

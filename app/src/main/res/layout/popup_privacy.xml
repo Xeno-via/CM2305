@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F1A950">
+
+    <TextView
+        android:id="@+id/privacytitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="Privacy Information"
+        android:textSize="34sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/privacyinfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="8dp"
+        android:text="Night-time Security App requires some personal information in order for us to complete our task. We store the following information:"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/privacytitle" />
+
+    <TextView
+        android:id="@+id/privacyOne"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="1: Email for user login details and also to store your personalised settings."
+        app:layout_constraintStart_toStartOf="@+id/privacyinfo"
+        app:layout_constraintTop_toBottomOf="@+id/privacyinfo" />
+
+    <TextView
+        android:id="@+id/privacyTwo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="2: Name for when your added friends want to track your safety."
+        app:layout_constraintStart_toStartOf="@+id/privacyOne"
+        app:layout_constraintTop_toBottomOf="@+id/privacyOne" />
+
+    <TextView
+        android:id="@+id/privacyThree"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="3: Location for journey tracking. This is only stored either when in-app and not on a journey, or all the time when currently on a journey. As soon as a journey is finished, your location information is destroyed."
+        app:layout_constraintStart_toStartOf="@+id/privacyTwo"
+        app:layout_constraintTop_toBottomOf="@+id/privacyTwo" />
+
+    <TextView
+        android:id="@+id/privacyLocations"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="All saved locations are saved locally to your machine, and therefore cannot be accessed by anyone else but you."
+        app:layout_constraintStart_toStartOf="@+id/privacyThree"
+        app:layout_constraintTop_toBottomOf="@+id/privacyThree" />
+
+    <TextView
+        android:id="@+id/privacyConfirmation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="All data that is stored is necessary to the applications function; we do not store any unneeded information. Once information is no longer needed, it is destroyed. All data is stored securely on a Database provided by Google Firebase. For additional information on their privacy information and ToS, please visit:"
+        app:layout_constraintStart_toStartOf="@+id/privacyLocations"
+        app:layout_constraintTop_toBottomOf="@+id/privacyLocations" />
+
+    <TextView
+        android:id="@+id/privacyURL"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="https://firebase.google.com/support/privacy"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/privacyConfirmation" />
+</androidx.constraintlayout.widget.ConstraintLayout>

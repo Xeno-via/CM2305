@@ -3,11 +3,24 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/matth/OneDrive/Documents/Coding/AndroidStudio/Projects/CM2305/app/src/main/res/layout/activity_maps.xml" value="0.1" />
+        <entry key="..\:/Users/matth/OneDrive/Documents/Coding/AndroidStudio/Projects/CM2305/app/src/main/res/layout-w1240dp/activity_login.xml" value="0.12081659973226239" />
+        <entry key="..\:/Users/matth/OneDrive/Documents/Coding/AndroidStudio/Projects/CM2305/app/src/main/res/layout-w936dp/activity_login.xml" value="0.141015625" />
+        <entry key="..\:/Users/matth/OneDrive/Documents/Coding/AndroidStudio/Projects/CM2305/app/src/main/res/layout/activity_database.xml" value="0.18802083333333333" />
+        <entry key="..\:/Users/matth/OneDrive/Documents/Coding/AndroidStudio/Projects/CM2305/app/src/main/res/layout/activity_firebase_ui.xml" value="0.18802083333333333" />
+        <entry key="..\:/Users/matth/OneDrive/Documents/Coding/AndroidStudio/Projects/CM2305/app/src/main/res/layout/activity_login.xml" value="0.18802083333333333" />
+        <entry key="..\:/Users/matth/OneDrive/Documents/Coding/AndroidStudio/Projects/CM2305/app/src/main/res/layout/activity_maps.xml" value="0.33" />
+        <entry key="..\:/Users/matth/OneDrive/Documents/Coding/AndroidStudio/Projects/CM2305/app/src/main/res/layout/content_maps.xml" value="0.18802083333333333" />
+        <entry key="..\:/Users/matth/OneDrive/Documents/Coding/AndroidStudio/Projects/CM2305/app/src/main/res/layout/custom_list_item.xml" value="0.18802083333333333" />
         <entry key="..\:/Users/matth/OneDrive/Documents/Coding/AndroidStudio/Projects/CM2305/app/src/main/res/layout/fragment_add_account.xml" value="0.18802083333333333" />
         <entry key="..\:/Users/matth/OneDrive/Documents/Coding/AndroidStudio/Projects/CM2305/app/src/main/res/layout/friend_item.xml" value="0.358695652173913" />
         <entry key="..\:/Users/matth/OneDrive/Documents/Coding/AndroidStudio/Projects/CM2305/app/src/main/res/layout/friend_layout.xml" value="0.358695652173913" />
+        <entry key="..\:/Users/matth/OneDrive/Documents/Coding/AndroidStudio/Projects/CM2305/app/src/main/res/layout/popup_privacy.xml" value="0.5" />
         <entry key="..\:/Users/matth/OneDrive/Documents/Coding/AndroidStudio/Projects/CM2305/app/src/main/res/layout/popup_settings.xml" value="0.2" />
+        <entry key="..\:/Users/matth/OneDrive/Documents/Coding/AndroidStudio/Projects/CM2305/app/src/main/res/layout/simple_list_item_1.xml" value="0.18802083333333333" />
+        <entry key="..\:/Users/matth/OneDrive/Documents/Coding/AndroidStudio/Projects/CM2305/app/src/main/res/layout/trusted_disp.xml" value="0.18802083333333333" />
+        <entry key="..\:/Users/matth/OneDrive/Documents/Coding/AndroidStudio/Projects/CM2305/app/src/main/res/layout/user_item.xml" value="0.18802083333333333" />
+        <entry key="..\:/Users/matth/OneDrive/Documents/Coding/AndroidStudio/Projects/CM2305/app/src/main/res/menu/navbar.xml" value="0.18802083333333333" />
+        <entry key="..\:/Users/matth/OneDrive/Documents/Coding/AndroidStudio/Projects/CM2305/app/src/main/res/menu/new_node_menu.xml" value="0.18802083333333333" />
         <entry key="..\:/Users/sill/StudioProjects/CM2305/app/src/main/res/drawable/ic_baseline_close_24.xml" value="0.34" />
         <entry key="..\:/Users/sill/StudioProjects/CM2305/app/src/main/res/layout/activity_database.xml" value="0.21419410004275333" />
         <entry key="..\:/Users/sill/StudioProjects/CM2305/app/src/main/res/layout/activity_firebase_ui.xml" value="0.182129115006413" />
@@ -30,5 +43,5 @@
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_X" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK" />
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_16" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK" />
 </project>
