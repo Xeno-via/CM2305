@@ -189,11 +189,11 @@
             android:id="@+id/showPrivacyButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="76dp"
+            android:layout_marginBottom="16dp"
             android:clickable="true"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/showSettingsButton"
+            app:layout_constraintBottom_toTopOf="@+id/DangerButton"
+            app:layout_constraintEnd_toEndOf="@+id/floatingActionButton4"
+            app:layout_constraintStart_toStartOf="@+id/DangerButton"
             app:srcCompat="?android:attr/alertDialogIcon" />
 
 
