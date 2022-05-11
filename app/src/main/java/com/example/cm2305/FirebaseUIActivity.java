@@ -59,7 +59,7 @@ public class FirebaseUIActivity extends AppCompatActivity {
         Intent signInIntent = AuthUI.getInstance()
                 .createSignInIntentBuilder()
                 .setIsSmartLockEnabled(false)
-                .setTheme(R.style.LoginStyle)
+                .setTheme(R.style.MySuperAppTheme)
                 .setAvailableProviders(providers)
                 .build();
         signInLauncher.launch(signInIntent);
