@@ -185,6 +185,17 @@
             app:layout_constraintEnd_toStartOf="@+id/floatingActionButton4"
             tools:ignore="SpeakableTextPresentCheck" />
 
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/showPrivacyButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:clickable="true"
+            app:layout_constraintBottom_toTopOf="@+id/DangerButton"
+            app:layout_constraintEnd_toEndOf="@+id/floatingActionButton4"
+            app:layout_constraintStart_toStartOf="@+id/DangerButton"
+            app:srcCompat="?android:attr/alertDialogIcon" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
