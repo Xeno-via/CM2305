@@ -65,7 +65,6 @@ public class UserAdapter extends FirebaseRecyclerAdapter<User, UserAdapter.UserH
         holder.textViewWhat3Words.setText(String.valueOf(model.getWhat3Words()));
 
         if (model.getDangerLevel().equals("Danger") || model.getDangerLevel().equals("Ask Friend to Call 999")){
-            Log.d(TAG, "Value is: " + model.getDangerLevel());
             holder.relLay.setBackgroundColor(RED);
 
         }
