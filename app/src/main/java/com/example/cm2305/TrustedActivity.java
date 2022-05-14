@@ -103,7 +103,7 @@ public class TrustedActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
+
                 Intent intent = new Intent(getApplicationContext(), FriendRequestActivity.class);
                 startActivity(intent); //change activity
 
@@ -116,7 +116,7 @@ public class TrustedActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                // TODO Auto-generated method stub
+
                 Intent intent = new Intent(getApplicationContext(), FriendsListActivity.class);
                 startActivity(intent); //change activity
 
